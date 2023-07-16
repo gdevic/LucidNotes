@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QMimeData>
 #include <QMimeDatabase>
+#include <QSettings>
 #include <QStringDecoder>
 
 WidgetTextEdit::WidgetTextEdit(QWidget *parent) :
@@ -10,6 +11,22 @@ WidgetTextEdit::WidgetTextEdit(QWidget *parent) :
     ui(new Ui::WidgetTextEdit)
 {
     ui->setupUi(this);
+    m_editingToolbar = ui->editingToolbar;
+    m_textEdit = ui->textEdit;
+
+    QSettings settings;
+    showToolbar(settings.value("editingToolbar", true).toBool());
+
+    connect(m_textEdit, &CTextEdit::currentCharFormatChanged, this, &WidgetTextEdit::currentCharFormatChanged);
+    connect(m_textEdit, &CTextEdit::cursorPositionChanged,    this, &WidgetTextEdit::cursorPositionChanged);
+    connect(ui->comboFont, &QComboBox::textActivated, this, &WidgetTextEdit::textFamily);
+    connect(ui->comboSize, &QComboBox::textActivated, this, &WidgetTextEdit::textSize);
+
+    // Populate text size combo box
+    const QList<int> standardSizes = QFontDatabase::standardSizes();
+    for (int size : standardSizes)
+        ui->comboSize->addItem(QString::number(size));
+    ui->comboSize->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
 
     // Testing:
     //   * Show or hide editing toolbar
@@ -36,13 +53,13 @@ WidgetTextEdit::WidgetTextEdit(QWidget *parent) :
             auto encoding = QStringDecoder::encodingForHtml(data);
             QString str = QStringDecoder(encoding ? *encoding : QStringDecoder::Utf8)(data);
             QUrl fileUrl = f.startsWith(u':') ? QUrl(f) : QUrl::fromLocalFile(f);
-            ui->textEdit->document()->setBaseUrl(fileUrl.adjusted(QUrl::RemoveFilename));
-            ui->textEdit->setHtml(str);
+            m_textEdit->document()->setBaseUrl(fileUrl.adjusted(QUrl::RemoveFilename));
+            m_textEdit->setHtml(str);
         }
         else if (mimeTypeName == u"text/markdown")
-            ui->textEdit->setMarkdown(QString::fromUtf8(data));
+            m_textEdit->setMarkdown(QString::fromUtf8(data));
         else
-            ui->textEdit->setPlainText(QString::fromUtf8(data));
+            m_textEdit->setPlainText(QString::fromUtf8(data));
     });
 }
 
@@ -51,24 +68,57 @@ WidgetTextEdit::~WidgetTextEdit()
     delete ui;
 }
 
-bool WidgetTextEdit::isToolbarVisible()
-{
-    return ui->editingToolbar->isVisible();
-}
-
 void WidgetTextEdit::showToolbar(bool shown)
 {
-    ui->editingToolbar->setVisible(shown);
-    emit editingToolbarChanged(shown);
-}
+    m_editingToolbar->setVisible(shown);
 
-QTextDocument *WidgetTextEdit::getDoc()
-{
-    return ui->textEdit->document();
+    QSettings settings;
+    settings.setValue("editingToolbar", shown);
 }
 
 void WidgetTextEdit::setDoc(QTextDocument *doc)
 {
-    ui->textEdit->setDocument(doc);
-    emit docChanged(doc);
+    m_textEdit->setDocument(doc);
+}
+
+void WidgetTextEdit::textFamily(const QString &f)
+{
+    QTextCharFormat fmt;
+    fmt.setFontFamilies({f});
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void WidgetTextEdit::textSize(const QString &p)
+{
+    qreal pointSize = p.toFloat();
+    if (pointSize > 0)
+    {
+        QTextCharFormat fmt;
+        fmt.setFontPointSize(pointSize);
+        mergeFormatOnWordOrSelection(fmt);
+    }
+}
+
+void WidgetTextEdit::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
+{
+    QTextCursor cursor = m_textEdit->textCursor();
+    if (!cursor.hasSelection())
+        cursor.select(QTextCursor::WordUnderCursor);
+    cursor.mergeCharFormat(format);
+    m_textEdit->mergeCurrentCharFormat(format);
+}
+
+void WidgetTextEdit::currentCharFormatChanged(const QTextCharFormat &format)
+{
+    fontChanged(format.font());
+}
+
+void WidgetTextEdit::fontChanged(const QFont &f)
+{
+    ui->comboFont->setCurrentIndex(ui->comboFont->findText(QFontInfo(f).family()));
+    ui->comboSize->setCurrentIndex(ui->comboSize->findText(QString::number(f.pointSize())));
+}
+
+void WidgetTextEdit::cursorPositionChanged()
+{
 }

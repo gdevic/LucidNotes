@@ -63,10 +63,14 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QFontComboBox" name="fontSelectComboBox"/>
+         <widget class="QFontComboBox" name="comboFont"/>
         </item>
         <item>
-         <widget class="QComboBox" name="fontSizeComboBox"/>
+         <widget class="QComboBox" name="comboSize">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer">
