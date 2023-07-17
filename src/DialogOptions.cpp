@@ -1,6 +1,8 @@
 #include "DialogOptions.h"
 #include "ui_DialogOptions.h"
+#include <QFileDialog>
 #include <QSettings>
+#include <QStandardPaths>
 
 DialogOptions::DialogOptions(QWidget *parent) :
     QDialog(parent),
@@ -23,6 +25,15 @@ DialogOptions::DialogOptions(QWidget *parent) :
 
     // Populate options with the values from settings or with defaults
 
+    // ---------- General  ----------
+
+    ui->wksDir->setText(settings.value("workspaceDir").toString());
+    // If the workspace directory change had already been armed, but the app has not restarted yet, color the new path
+    if (!settings.value("workspaceDirNext").toString().isEmpty())
+        ui->wksDir->setStyleSheet("color: rgb(255, 15, 15);");
+
+    // ----------   Note   ----------
+
     // Get the current font
     ui->comboFont->setCurrentFont(settings.value("font", QApplication::font()).value<QFont>());
 
@@ -37,6 +48,7 @@ DialogOptions::DialogOptions(QWidget *parent) :
     connect(ui->optionTree, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onOptionTreeClicked(QTreeWidgetItem*,int)));
     connect(ui->okBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(ui->okBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(ui->pbChangeWksDir, SIGNAL(clicked()), this, SLOT(onWksDirClicked()));
 }
 
 DialogOptions::~DialogOptions()
@@ -53,6 +65,10 @@ DialogOptions::~DialogOptions()
 void DialogOptions::onApply()
 {
     QSettings settings;
+    // The workspace directory, if changed, should take effect when the app restarts
+    settings.remove("workspaceDirNext");
+    if (settings.value("workspaceDir").toString() != ui->wksDir->text())
+        settings.setValue("workspaceDirNext", ui->wksDir->text()); // Arms the new workspace directory
     settings.setValue("font", ui->comboFont->currentFont());
     settings.setValue("fontSizeIndex", ui->comboSize->currentIndex());
 }
@@ -84,4 +100,18 @@ void DialogOptions::onOptionTreeClicked(QTreeWidgetItem *item, int)
 
     QSettings settings;
     settings.setValue("optionsIndex", index);
+}
+
+/*
+ * Select the local workspace directory
+ */
+void DialogOptions::onWksDirClicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, "Select new local directory", ui->wksDir->text(), QFileDialog::ShowDirsOnly);
+    if (!dir.isEmpty() && (dir != ui->wksDir->text()))
+    {
+        qInfo() << "New workspace directory:" << dir;
+        ui->wksDir->setText(dir);
+        ui->wksDir->setStyleSheet("color: rgb(255, 15, 15);");
+    }
 }
