@@ -1,6 +1,8 @@
 #include "MainWindow.h"
-
 #include <QApplication>
+#include <QDir>
+#include <QLockFile>
+#include <QMessageBox>
 #include <QSettings>
 #include <QStandardPaths>
 
@@ -8,6 +10,13 @@ int main(int argc, char *argv[])
 {
     int ret = -1;
     QApplication a(argc, argv);
+
+    // Ensure that only one instance of this application is running
+    QLockFile lockFile(QDir::temp().absoluteFilePath("notes.lock"));
+    if (!lockFile.tryLock(100))
+        return QMessageBox::warning(nullptr, "Notes",
+        "The second instance of this application is already running!\n\n" \
+        "If that is incorrect, remove the lock file:\n" + lockFile.fileName());
 
     // Initialize core application attributes
     // Settings are stored in "HKEY_CURRENT_USER\Software\Baltazar Studios, LLC\Notes"
