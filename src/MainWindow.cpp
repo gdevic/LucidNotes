@@ -36,21 +36,15 @@ void MainWindow::onOptions()
 void MainWindow::writeSettings()
 {
     QSettings settings;
-
-    settings.beginGroup("MainWindow");
-    settings.setValue("geometry", saveGeometry());
-    settings.endGroup();
+    settings.setValue("mainWindowGeometry", saveGeometry());
 }
 
 void MainWindow::readSettings()
 {
     QSettings settings;
-
-    settings.beginGroup("MainWindow");
-    const auto geometry = settings.value("geometry", QByteArray()).toByteArray();
+    const auto geometry = settings.value("mainWindowGeometry", QByteArray()).toByteArray();
     if (geometry.isEmpty())
         setGeometry(200, 200, 400, 400);
     else
         restoreGeometry(geometry);
-    settings.endGroup();
 }
