@@ -19,7 +19,7 @@ DialogOptions::DialogOptions(QWidget *parent) :
         new QTreeWidgetItem(QStringList("Note")),
     };
     ui->optionTree->insertTopLevelItems(0, items);
-    int index = settings.value("optionsIndex", 0).toInt();
+    int index = settings.value("optionsPageIndex", 0).toInt();
     ui->optionTree->setCurrentItem(items[index]);
     ui->stackedWidget->setCurrentIndex(index);
 
@@ -99,7 +99,7 @@ void DialogOptions::onOptionTreeClicked(QTreeWidgetItem *item, int)
     ui->stackedWidget->setCurrentIndex(index);
 
     QSettings settings;
-    settings.setValue("optionsIndex", index);
+    settings.setValue("optionsPageIndex", index);
 }
 
 /*
