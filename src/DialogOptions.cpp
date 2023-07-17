@@ -27,6 +27,8 @@ DialogOptions::DialogOptions(QWidget *parent) :
 
     // ---------- General  ----------
 
+    ui->pbChangeWksDir->setIcon(QApplication::style()->standardIcon(QStyle::SP_DialogOpenButton));
+
     ui->wksDir->setText(settings.value("workspaceDir").toString());
     // If the workspace directory change had already been armed, but the app has not restarted yet, color the new path
     if (!settings.value("workspaceDirNext").toString().isEmpty())
