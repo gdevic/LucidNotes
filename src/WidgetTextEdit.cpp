@@ -17,15 +17,15 @@ WidgetTextEdit::WidgetTextEdit(QWidget *parent) :
     QSettings settings;
     showToolbar(settings.value("editingToolbar", true).toBool());
 
-    // Get the current font
-    ui->comboFont->setCurrentFont(settings.value("font", QApplication::font()).value<QFont>());
-
-    // Populate text size combo box
+    // Populate text size combo box and set the selected font and font size
     const QList<int> standardSizes = QFontDatabase::standardSizes();
     for (int size : standardSizes)
         ui->comboSize->addItem(QString::number(size));
+    QFont font(settings.value("font", QApplication::font()).value<QFont>());
     int fontSizeIndex = settings.value("fontSizeIndex", 0).toInt();
-    ui->comboSize->setCurrentIndex(fontSizeIndex);
+    font.setPointSize(standardSizes[fontSizeIndex]);
+    m_textEdit->setFont(font);
+    fontChanged(font);
 
     connect(m_textEdit, &CTextEdit::currentCharFormatChanged, this, &WidgetTextEdit::currentCharFormatChanged);
     connect(m_textEdit, &CTextEdit::cursorPositionChanged,    this, &WidgetTextEdit::cursorPositionChanged);
@@ -110,6 +110,7 @@ void WidgetTextEdit::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
         cursor.select(QTextCursor::WordUnderCursor);
     cursor.mergeCharFormat(format);
     m_textEdit->mergeCurrentCharFormat(format);
+    m_textEdit->setFocus();
 }
 
 void WidgetTextEdit::currentCharFormatChanged(const QTextCharFormat &format)
