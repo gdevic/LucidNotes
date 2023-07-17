@@ -17,16 +17,20 @@ WidgetTextEdit::WidgetTextEdit(QWidget *parent) :
     QSettings settings;
     showToolbar(settings.value("editingToolbar", true).toBool());
 
-    connect(m_textEdit, &CTextEdit::currentCharFormatChanged, this, &WidgetTextEdit::currentCharFormatChanged);
-    connect(m_textEdit, &CTextEdit::cursorPositionChanged,    this, &WidgetTextEdit::cursorPositionChanged);
-    connect(ui->comboFont, &QComboBox::textActivated, this, &WidgetTextEdit::textFamily);
-    connect(ui->comboSize, &QComboBox::textActivated, this, &WidgetTextEdit::textSize);
+    // Get the current font
+    ui->comboFont->setCurrentFont(settings.value("font", QApplication::font()).value<QFont>());
 
     // Populate text size combo box
     const QList<int> standardSizes = QFontDatabase::standardSizes();
     for (int size : standardSizes)
         ui->comboSize->addItem(QString::number(size));
-    ui->comboSize->setCurrentIndex(standardSizes.indexOf(QApplication::font().pointSize()));
+    int fontSizeIndex = settings.value("fontSizeIndex", 0).toInt();
+    ui->comboSize->setCurrentIndex(fontSizeIndex);
+
+    connect(m_textEdit, &CTextEdit::currentCharFormatChanged, this, &WidgetTextEdit::currentCharFormatChanged);
+    connect(m_textEdit, &CTextEdit::cursorPositionChanged,    this, &WidgetTextEdit::cursorPositionChanged);
+    connect(ui->comboFont, &QComboBox::textActivated, this, &WidgetTextEdit::textFamily);
+    connect(ui->comboSize, &QComboBox::textActivated, this, &WidgetTextEdit::textSize);
 
     // Testing:
     //   * Show or hide editing toolbar

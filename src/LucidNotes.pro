@@ -13,6 +13,7 @@ SOURCES += \
     ClassRSync.cpp \
     ClassUtils.cpp \
     ClassWorkspace.cpp \
+    DialogOptions.cpp \
     WidgetTextEdit.cpp \
     aes256.cpp \
     main.cpp \
@@ -25,11 +26,13 @@ HEADERS += \
     ClassRSync.h \
     ClassUtils.h \
     ClassWorkspace.h \
+    DialogOptions.h \
     MainWindow.h \
     WidgetTextEdit.h \
     aes256.h
 
 FORMS += \
+    DialogOptions.ui \
     MainWindow.ui \
     WidgetTextEdit.ui
 

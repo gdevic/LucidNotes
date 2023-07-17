@@ -17,6 +17,7 @@ public:
 
 private slots:
     void closeEvent(QCloseEvent *event);
+    void onOptions();
 
 private:
     void writeSettings();
