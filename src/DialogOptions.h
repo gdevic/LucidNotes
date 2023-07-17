@@ -23,6 +23,7 @@ private slots:
     void reject() override;
     void onOptionTreeClicked(QTreeWidgetItem*, int);
     void onChangeWksDirClicked();
+    void onResetWksDirClicked();
 
 private:
     Ui::DialogOptions *ui;

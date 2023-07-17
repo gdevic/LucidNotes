@@ -51,6 +51,7 @@ DialogOptions::DialogOptions(QWidget *parent) :
     connect(ui->okBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(ui->okBox, SIGNAL(rejected()), this, SLOT(reject()));
     connect(ui->pbChangeWksDir, SIGNAL(clicked()), this, SLOT(onChangeWksDirClicked()));
+    connect(ui->pbResetWksDir, SIGNAL(clicked(bool)), this, SLOT(onResetWksDirClicked()));
 }
 
 DialogOptions::~DialogOptions()
@@ -117,3 +118,15 @@ void DialogOptions::onChangeWksDirClicked()
         ui->wksDir->setStyleSheet("color: rgb(255, 15, 15);");
     }
 }
+
+/*
+ * Reset any changes to the local workspace directory
+ */
+void DialogOptions::onResetWksDirClicked()
+{
+    QSettings settings;
+    ui->wksDir->setText(settings.value("workspaceDir").toString());
+    ui->wksDir->setStyleSheet("");
+}
+
+
