@@ -48,7 +48,7 @@ DialogOptions::DialogOptions(QWidget *parent) :
     connect(ui->optionTree, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onOptionTreeClicked(QTreeWidgetItem*,int)));
     connect(ui->okBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(ui->okBox, SIGNAL(rejected()), this, SLOT(reject()));
-    connect(ui->pbChangeWksDir, SIGNAL(clicked()), this, SLOT(onWksDirClicked()));
+    connect(ui->pbChangeWksDir, SIGNAL(clicked()), this, SLOT(onChangeWksDirClicked()));
 }
 
 DialogOptions::~DialogOptions()
@@ -105,7 +105,7 @@ void DialogOptions::onOptionTreeClicked(QTreeWidgetItem *item, int)
 /*
  * Select the local workspace directory
  */
-void DialogOptions::onWksDirClicked()
+void DialogOptions::onChangeWksDirClicked()
 {
     QString dir = QFileDialog::getExistingDirectory(this, "Select new local directory", ui->wksDir->text(), QFileDialog::ShowDirsOnly);
     if (!dir.isEmpty() && (dir != ui->wksDir->text()))
