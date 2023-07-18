@@ -13,6 +13,12 @@ public:
 
     static QString getUUID() { return QUuid::createUuid().toString(QUuid::Id128).toUpper(); }
     static QString getUUID8() { return getUUID().left(8) + getUUID().right(8); }
+    static quint64 uid8toInt64(QString uid8)
+    {
+        bool bStatus = false;
+        quint64 n = uid8.toULongLong(&bStatus, 16);
+        return bStatus ? n : 0;
+    }
 
     typedef std::vector<unsigned char> ByteArray;
     static ByteArray str2ba(QString s)

@@ -14,6 +14,10 @@ class ClassNote : public QObject
 public:
     explicit ClassNote(QObject *parent = nullptr);
 
+    // XXX To be private:
+    bool loadBlob(QString blobFileName, bool compress, bool encrypt, QString key);
+    bool saveBlob(QString blobFileName, bool compress, bool encrypt, QString key);
+
 signals:
 
 private:
