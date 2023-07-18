@@ -9,6 +9,7 @@ CONFIG += c++17
 SOURCES += \
     CTextDocument.cpp \
     CTextEdit.cpp \
+    ClassDatabase.cpp \
     ClassNote.cpp \
     ClassNotebook.cpp \
     ClassRSync.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 HEADERS += \
     CTextDocument.h \
     CTextEdit.h \
+    ClassDatabase.h \
     ClassNote.h \
     ClassNotebook.h \
     ClassRSync.h \
