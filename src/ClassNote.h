@@ -3,9 +3,10 @@
 
 #include <QObject>
 
+class CTextDocument;
+
 /*
- * This class contains a note text and all meta information for that note
- * as well as operations on that note
+ * This class contains a note text, all meta information for the note and operations on that note.
  */
 class ClassNote : public QObject
 {
@@ -15,6 +16,9 @@ public:
 
 signals:
 
+private:
+    QString m_uuid8;      // GUID-based file name associated with this document
+    CTextDocument *m_doc; // Document container for HTML notes
 };
 
 #endif // CLASSNOTE_H

@@ -4,6 +4,9 @@
 #include "ClassNote.h"
 #include <QObject>
 
+/*
+ * This class contains a collection of notes and operations on that collection.
+ */
 class ClassNotebook : public QObject
 {
     Q_OBJECT

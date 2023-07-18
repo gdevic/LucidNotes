@@ -6,6 +6,9 @@
 
 #include <QObject>
 
+/*
+ * This class contains the current workspace, its collection of notebooks and operations on the workspace.
+ */
 class ClassWorkspace : public QObject
 {
     Q_OBJECT
@@ -22,9 +25,6 @@ public slots:
 
     // Manage remote sync mechanisms
     bool CreateRSync(const QString &name);
-
-    // Manage notebooks that are part of the workspace
-
 
 private:
     QList<ClassNotebook *> m_notebooks;
