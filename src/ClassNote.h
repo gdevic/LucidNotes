@@ -2,9 +2,12 @@
 #define CLASSNOTE_H
 
 #include <QObject>
-#include <QTextDocument>
 
-class ClassNote : public QTextDocument
+/*
+ * This class contains a note text and all meta information for that note
+ * as well as operations on that note
+ */
+class ClassNote : public QObject
 {
     Q_OBJECT
 public:
