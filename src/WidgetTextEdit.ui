@@ -51,9 +51,19 @@
       </layout>
      </item>
      <item>
+      <widget class="QLineEdit" name="editTitle">
+       <property name="placeholderText">
+        <string>Title</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QWidget" name="editingToolbar" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
          <number>0</number>
         </property>
         <property name="rightMargin">
@@ -63,14 +73,14 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QFontComboBox" name="comboFont"/>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboSize">
+         <widget class="QFontComboBox" name="comboNoteFont">
           <property name="editable">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboNoteSize"/>
         </item>
         <item>
          <spacer name="horizontalSpacer">
@@ -89,7 +99,7 @@
       </widget>
      </item>
      <item>
-      <widget class="CTextEdit" name="textEdit"/>
+      <widget class="CTextEdit" name="editNote"/>
      </item>
     </layout>
    </item>

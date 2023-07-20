@@ -195,7 +195,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="labelNoteFont">
            <property name="styleSheet">
             <string notr="true">background-color: rgb(227, 227, 227);</string>
            </property>
@@ -205,12 +205,53 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="hlNoteFont">
            <item>
-            <widget class="QFontComboBox" name="comboFont"/>
+            <widget class="QFontComboBox" name="comboNoteFont">
+             <property name="editable">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboSize"/>
+            <widget class="QComboBox" name="comboNoteSize"/>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_1">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelTitleFont">
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(227, 227, 227);</string>
+           </property>
+           <property name="text">
+            <string>Note title font</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="hlTitleFont">
+           <item>
+            <widget class="QFontComboBox" name="comboTitleFont">
+             <property name="editable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboTitleSize"/>
            </item>
            <item>
             <spacer name="horizontalSpacer">

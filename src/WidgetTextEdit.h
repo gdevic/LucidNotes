@@ -5,6 +5,7 @@
 
 namespace Ui { class WidgetTextEdit; }
 class CTextEdit;
+class QLineEdit;
 class QTextCharFormat;
 class QTextDocument;
 
@@ -30,7 +31,8 @@ private slots:
 private:
     Ui::WidgetTextEdit *ui;
     QWidget *m_editingToolbar;
-    CTextEdit *m_textEdit;
+    QLineEdit *m_titleEdit;
+    CTextEdit *m_noteEdit;
 
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);

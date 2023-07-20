@@ -13,7 +13,7 @@ DialogOptions::DialogOptions(QWidget *parent) :
     QSettings settings;
     restoreGeometry(settings.value("optionsGeometry").toByteArray());
 
-    // Create the list of option panels and select (switch to) the last recently used (from settings)
+    // Create a list of option panels and select (switch to) the last recently used (from the settings)
     const QList<QTreeWidgetItem *> items = {
         new QTreeWidgetItem(QStringList("General")),
         new QTreeWidgetItem(QStringList("Note")),
@@ -23,7 +23,7 @@ DialogOptions::DialogOptions(QWidget *parent) :
     ui->optionTree->setCurrentItem(items[index]);
     ui->stackedWidget->setCurrentIndex(index);
 
-    // Populate options with the values from settings or with defaults
+    // Populate options with the values from the settings or with defaults
 
     // ---------- General  ----------
 
@@ -31,21 +31,26 @@ DialogOptions::DialogOptions(QWidget *parent) :
 
     ui->wksDir->setText(settings.value("workspaceDir").toString());
     // If the workspace directory change had already been armed, but the app has not restarted yet, color the new path
-    if (!settings.value("workspaceDirNext").toString().isEmpty())
+    if (settings.contains("workspaceDirNext"))
         ui->wksDir->setStyleSheet("color: rgb(255, 15, 15);");
 
     // ----------   Note   ----------
 
-    // Get the current font
-    ui->comboFont->setCurrentFont(settings.value("font", QApplication::font()).value<QFont>());
+    ui->comboTitleFont->setCurrentFont(settings.value("titleFont").value<QFont>());
+    ui->comboNoteFont->setCurrentFont(settings.value("noteFont").value<QFont>());
 
-    // Populate text size combo box
-    int defaultSize = QApplication::font().pointSize();
+    // Populate font size combo boxes for title and note fonts
     const QList<int> standardSizes = QFontDatabase::standardSizes();
-    for (int size : standardSizes)
-        ui->comboSize->addItem(QString::number(size));
-    int fontSizeIndex = settings.value("fontSizeIndex", standardSizes.indexOf(defaultSize)).toInt();
-    ui->comboSize->setCurrentIndex(fontSizeIndex);
+    for (auto size : standardSizes)
+    {
+        ui->comboTitleSize->addItem(QString::number(size));
+        ui->comboNoteSize->addItem(QString::number(size));
+    }
+
+    auto i = ui->comboTitleSize->findText(settings.value("titleFontPointSize").toString());
+    ui->comboTitleSize->setCurrentIndex(i);
+    auto j = ui->comboNoteSize->findText(settings.value("noteFontPointSize").toString());
+    ui->comboNoteSize->setCurrentIndex(j);
 
     connect(ui->optionTree, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(onOptionTreeClicked(QTreeWidgetItem*,int)));
     connect(ui->okBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -72,8 +77,10 @@ void DialogOptions::onApply()
     settings.remove("workspaceDirNext");
     if (settings.value("workspaceDir").toString() != ui->wksDir->text())
         settings.setValue("workspaceDirNext", ui->wksDir->text()); // Arms the new workspace directory
-    settings.setValue("font", ui->comboFont->currentFont());
-    settings.setValue("fontSizeIndex", ui->comboSize->currentIndex());
+    settings.setValue("titleFont", ui->comboTitleFont->currentFont());
+    settings.setValue("noteFont", ui->comboNoteFont->currentFont());
+    settings.setValue("titleFontPointSize", ui->comboTitleSize->currentText());
+    settings.setValue("noteFontPointSize", ui->comboNoteSize->currentText());
 }
 
 /*
@@ -128,5 +135,3 @@ void DialogOptions::onResetWksDirClicked()
     ui->wksDir->setText(settings.value("workspaceDir").toString());
     ui->wksDir->setStyleSheet("");
 }
-
-
