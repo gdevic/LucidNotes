@@ -1,26 +1,22 @@
 #include "ClassWorkspace.h"
+#include <QMessageBox>
 
-ClassWorkspace::ClassWorkspace(QObject *parent)
-    : QObject{parent}
+ClassWorkspace::ClassWorkspace(QString wksDir)
+    : QObject{nullptr}
+    , m_wksDir(wksDir)
+    , m_lockFile(wksDir + "/.lock")
 {
+    m_lockFile.setStaleLockTime(0);
 }
 
-bool ClassWorkspace::Create(const QString &path)
+bool ClassWorkspace::tryInit()
 {
-    return 0;
-}
-
-bool ClassWorkspace::Load(const QString &path)
-{
-    return 0;
-}
-
-bool ClassWorkspace::Save()
-{
-    return 0;
-}
-
-bool ClassWorkspace::CreateRSync(const QString &name)
-{
-    return 0;
+    if (!m_lockFile.tryLock(100))
+    {
+        QMessageBox::critical(nullptr, "Notes",
+            "This workspace is already in use.\n\n" \
+            "If that is incorrect, remove the lock file:\n" + m_lockFile.fileName());
+        return false;
+    }
+    return true;
 }

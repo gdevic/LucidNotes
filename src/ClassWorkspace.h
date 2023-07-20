@@ -1,34 +1,24 @@
 #ifndef CLASSWORKSPACE_H
 #define CLASSWORKSPACE_H
 
-#include "ClassNotebook.h"
-#include "ClassRSync.h"
-
 #include <QObject>
+#include <QLockFile>
 
 /*
- * This class contains the current workspace, its collection of notebooks and operations on the workspace.
+ * This class contains the current workspace; the collection of notebooks and operations on it.
  */
 class ClassWorkspace : public QObject
 {
     Q_OBJECT
 public:
-    explicit ClassWorkspace(QObject *parent = nullptr);
+    ClassWorkspace(QString wksDir);
+    bool tryInit();
 
 signals:
 
-public slots:
-    // Manage a workspace
-    bool Create(const QString &path);
-    bool Load(const QString &path);
-    bool Save();
-
-    // Manage remote sync mechanisms
-    bool CreateRSync(const QString &name);
-
 private:
-    QList<ClassNotebook *> m_notebooks;
-    QList<ClassRSync *> m_rsyncs;
+    QString m_wksDir; // Workspace root directory
+    QLockFile m_lockFile; // Workspace lock file (in the workspace root directory)
 };
 
 #endif // CLASSWORKSPACE_H
