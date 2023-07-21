@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "ClassWorkspace.h"
+#include "ClassUtils.h"
 #include <QApplication>
 #include <QFontDatabase>
 #include <QSettings>
@@ -19,6 +20,7 @@ void initAppDefaults()
 
     QSettings settings;
 
+    if (!settings.contains("userName"))           settings.setValue("userName", CUtils::getUserName());
     if (!settings.contains("workspaceDir"))       settings.setValue("workspaceDir", QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
 
     if (!settings.contains("titleFont"))          settings.setValue("titleFont", QApplication::font());

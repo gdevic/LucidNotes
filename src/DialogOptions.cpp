@@ -1,5 +1,6 @@
 #include "DialogOptions.h"
 #include "ui_DialogOptions.h"
+#include "ClassUtils.h"
 #include <QFileDialog>
 #include <QSettings>
 #include <QStandardPaths>
@@ -33,6 +34,12 @@ DialogOptions::DialogOptions(QWidget *parent) :
     // If the workspace directory change had already been armed, but the app has not restarted yet, color the new path
     if (settings.contains("workspaceDirNext"))
         ui->wksDir->setStyleSheet("color: rgb(255, 15, 15);");
+
+    ui->editUserName->setText(settings.value("userName").toString());
+    ui->editUserName->setPlaceholderText(CUtils::getUserName());
+    QRegularExpression rx("^[a-zA-Z]+");
+    QValidator *validator = new QRegularExpressionValidator(rx, this);
+    ui->editUserName->setValidator(validator);
 
     // ----------   Note   ----------
 
@@ -77,6 +84,8 @@ void DialogOptions::onApply()
     settings.remove("workspaceDirNext");
     if (settings.value("workspaceDir").toString() != ui->wksDir->text())
         settings.setValue("workspaceDirNext", ui->wksDir->text()); // Arms the new workspace directory
+    auto uname = ui->editUserName->text().trimmed();
+    settings.setValue("userName", uname.isEmpty() ? ui->editUserName->placeholderText() : uname);
     settings.setValue("titleFont", ui->comboTitleFont->currentFont());
     settings.setValue("noteFont", ui->comboNoteFont->currentFont());
     settings.setValue("titleFontPointSize", ui->comboTitleSize->currentText());
