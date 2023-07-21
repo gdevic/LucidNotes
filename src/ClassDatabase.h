@@ -1,7 +1,6 @@
 #ifndef CLASSDATABASE_H
 #define CLASSDATABASE_H
 
-#include <QObject>
 #include <QtSql>
 
 /*

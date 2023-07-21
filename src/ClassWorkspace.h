@@ -2,7 +2,6 @@
 #define CLASSWORKSPACE_H
 
 #include "ClassDatabase.h"
-#include <QObject>
 #include <QLockFile>
 
 /*
