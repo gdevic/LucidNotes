@@ -1,6 +1,7 @@
 #ifndef CLASSWORKSPACE_H
 #define CLASSWORKSPACE_H
 
+#include "ClassDatabase.h"
 #include <QObject>
 #include <QLockFile>
 
@@ -12,13 +13,14 @@ class ClassWorkspace : public QObject
     Q_OBJECT
 public:
     ClassWorkspace(QString wksDir);
-    bool tryInit();
+    bool init();
 
 signals:
 
 private:
     QString m_wksDir; // Workspace root directory
     QLockFile m_lockFile; // Workspace lock file (in the workspace root directory)
+    ClassDatabase m_db; // SQLite database supporting this workspace
 };
 
 #endif // CLASSWORKSPACE_H

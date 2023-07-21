@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     qInfo() << "Using workspace" << settings.value("workspaceDir");
 
     ClassWorkspace wks(settings.value("workspaceDir").toString());
-    if (wks.tryInit())
+    if (wks.init())
     {
         MainWindow w;
         w.show();
