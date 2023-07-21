@@ -10,6 +10,7 @@ SOURCES += \
     CTextDocument.cpp \
     CTextEdit.cpp \
     ClassDatabase.cpp \
+    ClassEnex.cpp \
     ClassNote.cpp \
     ClassRSync.cpp \
     ClassUtils.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     CTextDocument.h \
     CTextEdit.h \
     ClassDatabase.h \
+    ClassEnex.h \
     ClassNote.h \
     ClassRSync.h \
     ClassUtils.h \

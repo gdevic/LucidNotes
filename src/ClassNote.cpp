@@ -1,13 +1,12 @@
 #include "ClassNote.h"
 #include "ClassUtils.h"
-#include "CTextDocument.h"
+#include "ClassEnex.h"
 #include "aes256.h"
 #include <QFile>
 #include <QDir>
 
 ClassNote::ClassNote(QObject *parent)
     : QObject(parent)
-    , m_doc(nullptr)
 {
 }
 
@@ -48,7 +47,7 @@ bool ClassNote::loadBlob(QString blobFileName, bool compress, bool encrypt, QStr
             qWarning() << "loadFromBlob could not decompress the blob (corrupted file or invalid key)";
             return false;
         }
-        m_doc->setHtml(html);
+        m_doc.setHtml(html);
         //m_title = (m_doc->metaInformation(QTextDocument::DocumentTitle));
         return true;
     }
@@ -64,7 +63,7 @@ bool ClassNote::saveBlob(QString blobFileName, bool compress, bool encrypt, QStr
     qInfo() << "saveToBlob" << blobFileName << "compress:" << compress << "encrypt:" << encrypt << "key:" << key;
 
     //m_doc->setMetaInformation(QTextDocument::DocumentTitle, m_title);
-    QString html = m_doc->toHtml();
+    QString html = m_doc.toHtml();
     QByteArray ba = html.toUtf8();
     QByteArray cba = compress ? qCompress(ba, 9) : ba;
 
@@ -84,4 +83,59 @@ bool ClassNote::saveBlob(QString blobFileName, bool compress, bool encrypt, QStr
         return true;
     }
     return false;
+}
+
+/*
+ * Imports a note in ENEX format from the XML stream
+ */
+bool ClassNote::readNote(QXmlStreamReader &xml)
+{
+    while (!xml.atEnd())
+    {
+        xml.readNext();
+
+        qInfo() << "TYPE:" << ClassEnex::tokenType(xml);
+        qInfo() << "NAME:" << xml.name() << (xml.isStartElement() ? "START" : (xml.isEndElement() ? "END" : ""));
+        qInfo() << "TEXT:" << xml.text();
+
+        if (xml.isStartElement())
+        {
+            if ((xml.name().toString() == "title"))
+            {
+                if (readSection(xml, "title") == false)
+                    return false;
+                m_doc.setMetaInformation(QTextDocument::DocumentTitle, s);
+                qInfo() << "Title:" << s;
+            }
+
+            if (xml.name().toString() == "content")
+            {
+                if (readSection(xml, "content") == false)
+                    return false;
+                m_doc.setHtml(s);
+            }
+
+            if (xml.name().toString() == "created")
+            {
+
+            }
+        }
+        if ((xml.name().toString() == "note") && xml.isEndElement())
+            return true;
+    }
+    return false;
+}
+
+bool ClassNote::readSection(QXmlStreamReader &xml, QString sectionName)
+{
+    xml.readNext();
+    s = xml.text().toString();
+
+    xml.readNext();
+    if (xml.name().toString() != sectionName || !xml.isEndElement())
+    {
+        qCritical() << "readSection fails for" << sectionName;
+        return false;
+    }
+    return true;
 }

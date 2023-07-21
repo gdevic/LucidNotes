@@ -16,6 +16,7 @@ public:
     ~MainWindow();
 
 private slots:
+    void onImport();
     void closeEvent(QCloseEvent *event);
     void onOptions();
 

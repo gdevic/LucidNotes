@@ -1,7 +1,9 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "DialogOptions.h"
+#include "ClassEnex.h"
 #include <QCloseEvent>
+#include <QFileDialog>
 #include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -10,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onImport()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(onOptions()));
 
@@ -19,6 +22,16 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::onImport()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Import ENEX Notes", "", "Enex notes (*.enex);;All files (*.*)");
+    if(!fileName.isNull())
+    {
+        ClassEnex enex;
+        enex.import(fileName);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
