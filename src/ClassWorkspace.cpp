@@ -12,19 +12,43 @@ ClassWorkspace::ClassWorkspace(QString wksDir)
 
 bool ClassWorkspace::init()
 {
-//    if (!m_lockFile.tryLock(100))
-//    {
-//        QMessageBox::critical(nullptr, "Notes",
-//            "This workspace is already in use.\n\n" \
-//            "If that is incorrect, remove the lock file:\n" + m_lockFile.fileName());
-//        return false;
-//    }
-
-    if (!m_db.init(m_wksDir + "/notes.db"))
+#ifndef QT_DEBUG // Do not use locks when we are debugging
+    if (!m_lockFile.tryLock(100))
     {
         QMessageBox::critical(nullptr, "Notes",
-            "Unable to initialize local SQLite database.\n\n" \
-            "Please make sure this application is installed correctly.\n");
+            "This workspace is already in use.\n\n" \
+            "If that is incorrect, remove the lock file:\n" + m_lockFile.fileName());
+        return false;
+    }
+#endif
+
+    if (!m_db.open("workspace"))
+        return false;
+
+    // Initialize database with the tables used by the workspace class
+
+    static const QStringList commands = {
+        {"CREATE TABLE IF NOT EXISTS notebook_attr "
+         "(id INTEGER PRIMARY KEY NOT NULL, "
+         "name TEXT NOT NULL COLLATE NOCASE, "
+         "stack TEXT NOT NULL COLLATE NOCASE, "
+         "flags INTEGER, "
+         "note_count INTEGER);"},
+
+        {"INSERT OR REPLACE INTO notebook_attr(id, name, stack, flags) "
+         "VALUES (0, 'Inbox', '.', 1);"},
+
+        {"CREATE TABLE IF NOT EXISTS note_attr "
+         "(id INTEGER PRIMARY KEY NOT NULL, "
+         "guid TEXT NOT NULL, "
+         "title TEXT NOT NULL COLLATE NOCASE, "
+         "author TEXT COLLATE NOCASE, "
+         "notebook_id INTEGER NOT NULL, "
+         "flags INTEGER);"}
+    };
+    if (!m_db.queryExec(commands))
+    {
+        QMessageBox::critical(nullptr, "Notes", "Unable to initialize database defaults.\n\n" + m_db.getLastSqlError());
         return false;
     }
 
