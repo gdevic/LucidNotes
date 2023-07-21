@@ -11,7 +11,6 @@ SOURCES += \
     CTextEdit.cpp \
     ClassDatabase.cpp \
     ClassNote.cpp \
-    ClassNotebook.cpp \
     ClassRSync.cpp \
     ClassUtils.cpp \
     ClassWorkspace.cpp \
@@ -26,7 +25,6 @@ HEADERS += \
     CTextEdit.h \
     ClassDatabase.h \
     ClassNote.h \
-    ClassNotebook.h \
     ClassRSync.h \
     ClassUtils.h \
     ClassWorkspace.h \
