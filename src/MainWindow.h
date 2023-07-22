@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ClassWorkspace.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -12,7 +13,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(ClassWorkspace &wks);
     ~MainWindow();
 
 private slots:
@@ -26,5 +27,6 @@ private:
 
 private:
     Ui::MainWindow *ui;
+    ClassWorkspace &m_wks; // Workspace that this application window works on
 };
 #endif // MAINWINDOW_H

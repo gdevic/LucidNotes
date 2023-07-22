@@ -4,6 +4,8 @@
 #include "ClassDatabase.h"
 #include <QLockFile>
 
+class ClassNote;
+
 /*
  * This class contains the current workspace; the collection of notebooks and operations on it.
  */
@@ -13,8 +15,7 @@ class ClassWorkspace : public QObject
 public:
     ClassWorkspace(QString wksDir);
     bool init();
-
-signals:
+    void addNote(ClassNote *note);
 
 private:
     QString m_wksDir; // Workspace root directory

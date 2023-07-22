@@ -6,9 +6,10 @@
 #include <QFileDialog>
 #include <QSettings>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(ClassWorkspace &wks)
+    : QMainWindow(nullptr)
     , ui(new Ui::MainWindow)
+    , m_wks(wks)
 {
     ui->setupUi(this);
 
@@ -31,6 +32,8 @@ void MainWindow::onImport()
     {
         ClassEnex enex;
         enex.import(fileName);
+        foreach (auto note, enex.getNotes())
+            m_wks.addNote(note);
     }
 }
 

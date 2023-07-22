@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     ClassWorkspace wks(settings.value("workspaceDir").toString());
     if (wks.init())
     {
-        MainWindow w;
+        MainWindow w(wks);
         w.show();
         ret = a.exec();
     }

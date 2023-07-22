@@ -1,4 +1,5 @@
 #include "ClassWorkspace.h"
+#include "ClassNote.h"
 #include <QMessageBox>
 
 ClassWorkspace::ClassWorkspace(QString wksDir)
@@ -54,4 +55,12 @@ bool ClassWorkspace::init()
     }
 
     return true;
+}
+
+/*
+ * Add a new note to the workspace (file blob + database)
+ */
+void ClassWorkspace::addNote(ClassNote *note)
+{
+    qInfo() << "Workspace adding note:" << note->guid();
 }
