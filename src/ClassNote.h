@@ -2,6 +2,8 @@
 #define CLASSNOTE_H
 
 #include "CTextDocument.h"
+#include <QDateTime>
+#include <QFile>
 #include <QXmlStreamReader>
 
 /*
@@ -17,11 +19,14 @@ public:
     QString guid() { return m_uuid8; }
     QString title() { return m_title; }
     QString summary() { return m_summary; }
-    QString author() { return "Anonymous"; }
+    QString author() { return m_author; }
+    QDateTime &created() { return m_created; }
+    QDateTime &updated() { return m_updated; }
 
     bool readNote(QXmlStreamReader &xml);
     bool readSection(QXmlStreamReader &xml, QString sectionName);
-    bool saveBlob(QString blobPathName) { return saveBlob(blobPathName + "/" + m_uuid8, false, false, ""); }
+    bool saveBlob(QString blobPath) { return saveBlob(blobPath + "/" + m_uuid8, false, false, ""); }
+    void deleteBlob(QString blobPath) { QFile::remove(blobPath + "/" + m_uuid8); }
 
 private:
     QString s;                  // XXX Temp string read by readSection()
@@ -33,6 +38,9 @@ private:
     CTextDocument m_doc; // Document container for HTML notes
     QString m_title;     // Document title (duplicated in m_doc.metaInformation)
     QString m_summary;   // Short note summary, text only
+    QString m_author;    // Author of the note (short name or an email)
+    QDateTime m_created;
+    QDateTime m_updated;
 };
 
 #endif // CLASSNOTE_H

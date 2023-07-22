@@ -50,6 +50,8 @@ bool ClassWorkspace::init()
          "summary TEXT COLLATE NOCASE, "         // Note short summary text, normally taken from the note start
          "author TEXT COLLATE NOCASE, "          // Author name or email
          "notebook_id INTEGER NOT NULL, "        // ID of the notebook folder this note is shown
+         "date_created REAL, "                   // Date and time the note was created
+         "date_updated REAL, "                   // Date and time the note was last edited/changed
          "flags INTEGER);"}                      // Flags bitmap
     };
     if (!m_db.queryExec(commands))
@@ -70,14 +72,16 @@ bool ClassWorkspace::addNote(ClassNote *note)
     // Tell the note to save its document as a file data blob (the text of the note, which we do not put in the database)
     if (note->saveBlob(m_wksDataDir))
     {
-        static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook_id, flags)"
-                                       "VALUES(?, ?, ?, ?, ?, ?)";
+        static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook_id, date_created, date_updated, flags)"
+                                       "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         QStringList binds;
         binds << note->guid();
         binds << note->title();
         binds << note->summary();
         binds << note->author();
         binds << "0";
+        binds << note->created().toString(Qt::ISODate);
+        binds << note->updated().toString(Qt::ISODate);
         binds << "0";
         int lastID = m_db.queryExec(command, binds);
         qInfo() << "lastID" << lastID;
@@ -88,6 +92,9 @@ bool ClassWorkspace::addNote(ClassNote *note)
         }
         else
             qWarning() << "Unable to add a note" << m_db.getLastSqlError();
+
+        // Since adding to the database did not suceed, remove the file data blob
+        note->deleteBlob(m_wksDataDir);
     }
     else
         qWarning() << "Unable to save note blob";
