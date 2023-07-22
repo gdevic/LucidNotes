@@ -23,14 +23,6 @@
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
-      <widget class="QTreeView" name="treeView">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
       <widget class="QFrame" name="frame">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
