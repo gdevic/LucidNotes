@@ -1,6 +1,6 @@
 #include "DialogOptions.h"
 #include "ui_DialogOptions.h"
-#include "ClassUtils.h"
+#include "Utils.h"
 #include <QFileDialog>
 #include <QSettings>
 #include <QStandardPaths>
@@ -36,7 +36,7 @@ DialogOptions::DialogOptions(QWidget *parent) :
         ui->wksDir->setStyleSheet("color: rgb(255, 15, 15);");
 
     ui->editUserName->setText(settings.value("userName").toString());
-    ui->editUserName->setPlaceholderText(CUtils::getUserName());
+    ui->editUserName->setPlaceholderText(getUserName());
     QRegularExpression rx("^[a-zA-Z]+");
     QValidator *validator = new QRegularExpressionValidator(rx, this);
     ui->editUserName->setValidator(validator);

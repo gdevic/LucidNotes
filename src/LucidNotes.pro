@@ -12,7 +12,6 @@ SOURCES += \
     ClassDatabase.cpp \
     ClassEnex.cpp \
     ClassNote.cpp \
-    ClassUtils.cpp \
     ClassWorkspace.cpp \
     DialogOptions.cpp \
     WidgetTextEdit.cpp \
@@ -26,10 +25,10 @@ HEADERS += \
     ClassDatabase.h \
     ClassEnex.h \
     ClassNote.h \
-    ClassUtils.h \
     ClassWorkspace.h \
     DialogOptions.h \
     MainWindow.h \
+    Utils.h \
     WidgetTextEdit.h \
     aes256.h
 

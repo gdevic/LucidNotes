@@ -1,14 +1,14 @@
 #include "ClassNote.h"
-#include "ClassUtils.h"
 #include "ClassEnex.h"
 #include "aes256.h"
+#include "Utils.h"
 #include <QDir>
 #include <QFile>
 #include <QStringBuilder>
 
 ClassNote::ClassNote(QObject *parent)
     : QObject(parent)
-    , m_uuid8(CUtils::getUUID8())
+    , m_uuid8(getUUID8())
     , m_title("Untitled")
     , m_author("Anonymous")
 {
@@ -37,7 +37,7 @@ bool ClassNote::loadBlob(QString blobFileName, bool compress, bool encrypt, QStr
 
         if (encrypt)
         {
-            Aes256::decrypt(CUtils::str2ba(key), (const unsigned char*)enc.data(), enc.length(), plain);
+            Aes256::decrypt(str2ba(key), (const unsigned char*)enc.data(), enc.length(), plain);
             ba = QByteArray((const char*)plain.data(), plain.size());
         }
         else
@@ -79,7 +79,7 @@ bool ClassNote::saveBlob(QString blobFileName, bool compress, bool encrypt, QStr
         if (encrypt)
         {
             ByteArray enc;
-            Aes256::encrypt(CUtils::str2ba(key), (const unsigned char*)cba.data(), cba.length(), enc);
+            Aes256::encrypt(str2ba(key), (const unsigned char*)cba.data(), cba.length(), enc);
             stream.writeRawData((char *)(enc.data()), int(enc.size()));
         }
         else
