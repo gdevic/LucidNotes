@@ -70,3 +70,24 @@ bool ClassDatabase::queryExec(const QStringList &commands)
     }
     return true;
 }
+
+/*
+ * This convenience function executes a single SQL command with one or more
+ * positional parameters (strings) to bind.
+ */
+int ClassDatabase::queryExec(const QString command, const QStringList &binds)
+{
+    m_lastError.clear();
+    QSqlQuery query(QSqlDatabase::database(m_connectionName));
+    query.prepare(command);
+    foreach (auto param, binds)
+        query.addBindValue(param);
+    query.exec();
+    if (query.lastError().isValid())
+    {
+        m_lastError = query.lastError().text();
+        qWarning() << "queryExec error:" << m_lastError;
+        return 0;
+    }
+    return query.lastInsertId().toInt();
+}

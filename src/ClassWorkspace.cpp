@@ -5,9 +5,13 @@
 ClassWorkspace::ClassWorkspace(QString wksDir)
     : QObject{}
     , m_wksDir(wksDir)
+    , m_wksDataDir(wksDir + "/Data")
     , m_lockFile(wksDir + "/.lock")
     , m_db(this)
 {
+    // Create the workspace Data folder if it does not exist
+    QDir dir; dir.mkpath(m_wksDataDir);
+
     m_lockFile.setStaleLockTime(0);
 }
 
@@ -53,14 +57,39 @@ bool ClassWorkspace::init()
         QMessageBox::critical(nullptr, "Notes", "Unable to initialize database defaults.\n\n" + m_db.getLastSqlError());
         return false;
     }
-
     return true;
 }
 
 /*
  * Add a new note to the workspace (file blob + database)
  */
-void ClassWorkspace::addNote(ClassNote *note)
+bool ClassWorkspace::addNote(ClassNote *note)
 {
     qInfo() << "Workspace adding note:" << note->guid();
+
+    // Tell the note to save its document as a file data blob (the text of the note, which we do not put in the database)
+    if (note->saveBlob(m_wksDataDir))
+    {
+        static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook_id, flags)"
+                                       "VALUES(?, ?, ?, ?, ?, ?)";
+        QStringList binds;
+        binds << note->guid();
+        binds << note->title();
+        binds << note->summary();
+        binds << note->author();
+        binds << "0";
+        binds << "0";
+        int lastID = m_db.queryExec(command, binds);
+        qInfo() << "lastID" << lastID;
+        if (lastID)
+        {
+            qInfo() << "New note ID:" << lastID;
+            return true;
+        }
+        else
+            qWarning() << "Unable to add a note" << m_db.getLastSqlError();
+    }
+    else
+        qWarning() << "Unable to save note blob";
+    return false;
 }

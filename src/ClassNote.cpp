@@ -8,6 +8,7 @@
 ClassNote::ClassNote(QObject *parent)
     : QObject(parent)
     , m_uuid8(CUtils::getUUID8())
+    , m_title("Untitled")
 {
 }
 
@@ -106,6 +107,7 @@ bool ClassNote::readNote(QXmlStreamReader &xml)
                 if (readSection(xml, "title") == false)
                     return false;
                 m_doc.setMetaInformation(QTextDocument::DocumentTitle, s);
+                m_title = s;
                 qInfo() << "Title:" << s;
             }
 
@@ -114,6 +116,7 @@ bool ClassNote::readNote(QXmlStreamReader &xml)
                 if (readSection(xml, "content") == false)
                     return false;
                 m_doc.setHtml(s);
+                m_summary = m_doc.toPlainText().left(200).replace('\n', ' ');
             }
 
             if (xml.name().toString() == "created")
