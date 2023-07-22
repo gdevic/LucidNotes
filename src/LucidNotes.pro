@@ -14,6 +14,7 @@ SOURCES += \
     ClassNote.cpp \
     ClassWorkspace.cpp \
     DialogOptions.cpp \
+    WidgetTableView.cpp \
     WidgetTextEdit.cpp \
     aes256.cpp \
     main.cpp \
@@ -29,12 +30,14 @@ HEADERS += \
     DialogOptions.h \
     MainWindow.h \
     Utils.h \
+    WidgetTableView.h \
     WidgetTextEdit.h \
     aes256.h
 
 FORMS += \
     DialogOptions.ui \
     MainWindow.ui \
+    WidgetTableView.ui \
     WidgetTextEdit.ui
 
 # Default rules for deployment.
