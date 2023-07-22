@@ -17,6 +17,7 @@ public:
     bool queryExec(const QStringList &commands);
     int queryExec(const QString command, const QStringList &binds);
     QString getLastSqlError() { return m_lastError; }
+    QSqlDatabase getDB() { return QSqlDatabase::database(m_connectionName); }
 
 private:
     QString m_connectionName;

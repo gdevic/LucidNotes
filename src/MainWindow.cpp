@@ -18,6 +18,8 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(onOptions()));
 
+    ui->tableView->setupModel();
+
     // Testing the main view
     connect(ui->actionViewHorizontal, &QAction::triggered, this, [=]() { ui->splitter->setOrientation(Qt::Horizontal); });
     connect(ui->actionViewVertical, &QAction::triggered, this, [=]() { ui->splitter->setOrientation(Qt::Vertical); });
