@@ -7,6 +7,12 @@ WidgetTableView::WidgetTableView(QWidget *parent) :
     m_db(this)
 {
     ui->setupUi(this);
+
+    // Make the vertical spacing of the table more compact
+    QFontMetrics fm(ui->tableNotes->font());
+    qreal vsize = fm.height() * 1.2;
+    ui->tableNotes->verticalHeader()->setMinimumSectionSize(vsize);
+    ui->tableNotes->verticalHeader()->setDefaultSectionSize(vsize);
 }
 
 WidgetTableView::~WidgetTableView()
