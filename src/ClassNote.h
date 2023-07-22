@@ -14,6 +14,7 @@ class ClassNote : public QObject
     Q_OBJECT
 public:
     explicit ClassNote(QObject *parent = nullptr);
+    QString guid() { return m_uuid8; }
 
     bool readNote(QXmlStreamReader &xml);
     bool readSection(QXmlStreamReader &xml, QString sectionName);
@@ -24,7 +25,7 @@ private:
     bool saveBlob(QString blobFileName, bool compress, bool encrypt, QString key);
 
 private:
-    QString m_uuid8;     // GUID-based file name associated with this document
+    QString m_uuid8;     // GUID, a universally unique ID assigned to this note
     CTextDocument m_doc; // Document container for HTML notes
 };
 

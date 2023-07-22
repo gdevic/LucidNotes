@@ -7,6 +7,7 @@
 
 ClassNote::ClassNote(QObject *parent)
     : QObject(parent)
+    , m_uuid8(CUtils::getUUID8())
 {
 }
 
