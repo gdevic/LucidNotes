@@ -8,6 +8,11 @@ ClassEnex::ClassEnex(QObject *parent)
 {
 }
 
+ClassEnex::~ClassEnex()
+{
+    qDeleteAll(m_notes);
+}
+
 bool ClassEnex::import(QString fileName)
 {
     qInfo() << "Importing from:" << fileName;
@@ -23,8 +28,8 @@ bool ClassEnex::import(QString fileName)
             xml.readNext();
 
             qInfo() << "TYPE:" << tokenType(xml);
-            qInfo() << "NAME:" << xml.name() << (xml.isStartElement() ? "START" : (xml.isEndElement() ? "END" : ""));
-            qInfo() << "TEXT:" << xml.text();
+//            qInfo() << "NAME:" << xml.name() << (xml.isStartElement() ? "START" : (xml.isEndElement() ? "END" : ""));
+//            qInfo() << "TEXT:" << xml.text();
 
             if ((xml.name().toString() == "en-export") && xml.isStartElement())
             {
