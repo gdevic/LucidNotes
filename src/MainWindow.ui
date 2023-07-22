@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>879</width>
-    <height>500</height>
+    <width>959</width>
+    <height>873</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,33 +18,10 @@
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Vertical</enum>
       </property>
-      <property name="childrenCollapsible">
-       <bool>false</bool>
-      </property>
-      <widget class="QFrame" name="frame">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="WidgetTextEdit" name="text" native="true"/>
-        </item>
-       </layout>
-      </widget>
+      <widget class="WidgetTableView" name="tableView" native="true"/>
+      <widget class="WidgetTextEdit" name="textEdit" native="true"/>
      </widget>
     </item>
    </layout>
@@ -54,7 +31,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>879</width>
+     <width>959</width>
      <height>22</height>
     </rect>
    </property>
@@ -71,7 +48,15 @@
     </property>
     <addaction name="actionOptions"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionViewHorizontal"/>
+    <addaction name="actionViewVertical"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
    <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -90,12 +75,28 @@
     <string>Import...</string>
    </property>
   </action>
+  <action name="actionViewHorizontal">
+   <property name="text">
+    <string>Horizontal</string>
+   </property>
+  </action>
+  <action name="actionViewVertical">
+   <property name="text">
+    <string>Vertical</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>WidgetTextEdit</class>
    <extends>QWidget</extends>
    <header>WidgetTextEdit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WidgetTableView</class>
+   <extends>QWidget</extends>
+   <header>WidgetTableView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
