@@ -36,15 +36,16 @@ bool ClassWorkspace::init()
          "note_count INTEGER);"},
 
         {"INSERT OR REPLACE INTO notebook_attr(id, name, stack, flags) "
-         "VALUES (0, 'Inbox', '.', 1);"},
+         "VALUES (0, 'Inbox', '.', 1);"},        // Inbox folder is the default folder with the ID of 0
 
         {"CREATE TABLE IF NOT EXISTS note_attr "
-         "(id INTEGER PRIMARY KEY NOT NULL, "
-         "guid TEXT NOT NULL, "
-         "title TEXT NOT NULL COLLATE NOCASE, "
-         "author TEXT COLLATE NOCASE, "
-         "notebook_id INTEGER NOT NULL, "
-         "flags INTEGER);"}
+         "(id INTEGER PRIMARY KEY NOT NULL, "    // Note ID, locally unique to the database
+         "guid TEXT NOT NULL, "                  // GUID universally unique note ID
+         "title TEXT NOT NULL COLLATE NOCASE, "  // Title string
+         "summary TEXT COLLATE NOCASE, "         // Note short summary text, normally taken from the note start
+         "author TEXT COLLATE NOCASE, "          // Author name or email
+         "notebook_id INTEGER NOT NULL, "        // ID of the notebook folder this note is shown
+         "flags INTEGER);"}                      // Flags bitmap
     };
     if (!m_db.queryExec(commands))
     {
