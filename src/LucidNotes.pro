@@ -12,7 +12,6 @@ SOURCES += \
     ClassDatabase.cpp \
     ClassEnex.cpp \
     ClassNote.cpp \
-    ClassRSync.cpp \
     ClassUtils.cpp \
     ClassWorkspace.cpp \
     DialogOptions.cpp \
@@ -27,7 +26,6 @@ HEADERS += \
     ClassDatabase.h \
     ClassEnex.h \
     ClassNote.h \
-    ClassRSync.h \
     ClassUtils.h \
     ClassWorkspace.h \
     DialogOptions.h \
