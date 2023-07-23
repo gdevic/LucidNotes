@@ -39,8 +39,8 @@ private:
     QString m_title;     // Document title (duplicated in m_doc.metaInformation)
     QString m_summary;   // Short note summary, text only
     QString m_author;    // Author of the note (short name or an email)
-    QDateTime m_created;
-    QDateTime m_updated;
+    QDateTime m_created; // Date/time a note has been created
+    QDateTime m_updated; // Date/time a note has been last updated (text/title or other meta changed)
 };
 
 #endif // CLASSNOTE_H
