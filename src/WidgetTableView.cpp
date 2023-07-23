@@ -25,13 +25,13 @@ bool WidgetTableView::setupModel()
     if (!m_db.open("table"))
         return false;
 
-    m_model = new QSqlTableModel(ui->tableNotes, m_db.getDB());
+    // XXX Set any kind of query, like: "SELECT * FROM note_attr WHERE author = 'anonymous'"
+    m_model.setQuery("SELECT * FROM note_attr", m_db.getDB());
+    m_proxy.setSourceModel(&m_model);
 
-    m_model->setTable("note_attr");
-    m_model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-    m_model->select();
+    m_model.setHeaderData(1, Qt::Horizontal, "GUID"); // An Example of setting up the header column text
 
-    ui->tableNotes->setModel(m_model);
+    ui->tableNotes->setModel(&m_proxy);
 
     return true;
 }

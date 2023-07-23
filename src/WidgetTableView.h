@@ -18,8 +18,9 @@ public:
 
 private:
     Ui::WidgetTableView *ui;
-    QSqlTableModel *m_model;
     ClassDatabase m_db; // SQLite database connection supporting this view
+    QSqlQueryModel m_model; // Query model to select just a subset of notes for our table
+    QSortFilterProxyModel m_proxy; // Filter is needed to facilitate sorting of the query rows
 };
 
 #endif // WIDGETTABLEVIEW_H
