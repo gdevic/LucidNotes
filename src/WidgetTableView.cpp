@@ -13,6 +13,9 @@ WidgetTableView::WidgetTableView(QWidget *parent) :
     qreal vsize = fm.height() * 1.2;
     ui->tableNotes->verticalHeader()->setMinimumSectionSize(vsize);
     ui->tableNotes->verticalHeader()->setDefaultSectionSize(vsize);
+
+    connect(ui->tableNotes, SIGNAL(clicked(const QModelIndex&)), this, SLOT(cellSingleClicked(const QModelIndex&)));
+    connect(ui->tableNotes, SIGNAL(activated(const QModelIndex&)), this, SLOT(cellDoubleClicked(const QModelIndex&)));
 }
 
 WidgetTableView::~WidgetTableView()
@@ -34,4 +37,16 @@ bool WidgetTableView::setupModel()
     ui->tableNotes->setModel(&m_proxy);
 
     return true;
+}
+
+void WidgetTableView::cellSingleClicked(const QModelIndex &index)
+{
+    QString guid = m_model.index(index.row(), 1).data().toString();
+    qInfo() << "Single clicked" << guid;
+}
+
+void WidgetTableView::cellDoubleClicked(const QModelIndex &index)
+{
+    QString guid = m_model.index(index.row(), 1).data().toString();
+    qInfo() << "Double clicked" << guid;
 }

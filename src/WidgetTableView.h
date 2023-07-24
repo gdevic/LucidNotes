@@ -16,6 +16,10 @@ public:
     ~WidgetTableView();
     bool setupModel();
 
+public slots:
+    void cellSingleClicked(const QModelIndex &index);
+    void cellDoubleClicked(const QModelIndex &index);
+
 private:
     Ui::WidgetTableView *ui;
     ClassDatabase m_db; // SQLite database connection supporting this view
