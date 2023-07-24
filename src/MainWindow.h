@@ -8,6 +8,8 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+class EditWindow;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -20,6 +22,7 @@ private slots:
     void onImport();
     void closeEvent(QCloseEvent *event);
     void onOptions();
+    void openInExternalWindow(QString guid = QString()); // XXX
 
 private:
     void writeSettings();
@@ -27,6 +30,8 @@ private:
 
 private:
     Ui::MainWindow *ui;
+    QMap<QString, EditWindow *> m_editWindows; // A map of extra edit windows spawned by the user keyed by the note GUID
     ClassWorkspace &m_wks; // Workspace that this application window works on
 };
+
 #endif // MAINWINDOW_H

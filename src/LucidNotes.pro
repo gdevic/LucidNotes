@@ -14,6 +14,7 @@ SOURCES += \
     ClassNote.cpp \
     ClassWorkspace.cpp \
     DialogOptions.cpp \
+    EditWindow.cpp \
     WidgetTableView.cpp \
     WidgetTextEdit.cpp \
     aes256.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     ClassNote.h \
     ClassWorkspace.h \
     DialogOptions.h \
+    EditWindow.h \
     MainWindow.h \
     Utils.h \
     WidgetTableView.h \
@@ -36,6 +38,7 @@ HEADERS += \
 
 FORMS += \
     DialogOptions.ui \
+    EditWindow.ui \
     MainWindow.ui \
     WidgetTableView.ui \
     WidgetTextEdit.ui

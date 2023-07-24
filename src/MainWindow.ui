@@ -55,8 +55,15 @@
     <addaction name="actionViewHorizontal"/>
     <addaction name="actionViewVertical"/>
    </widget>
+   <widget class="QMenu" name="menuNote">
+    <property name="title">
+     <string>Note</string>
+    </property>
+    <addaction name="actionOpenInNewWindow"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
+   <addaction name="menuNote"/>
    <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -83,6 +90,11 @@
   <action name="actionViewVertical">
    <property name="text">
     <string>Vertical</string>
+   </property>
+  </action>
+  <action name="actionOpenInNewWindow">
+   <property name="text">
+    <string>Open In a New Window</string>
    </property>
   </action>
  </widget>

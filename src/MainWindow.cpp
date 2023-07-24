@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 #include "DialogOptions.h"
 #include "ClassEnex.h"
+#include "EditWindow.h"
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QSettings>
@@ -17,6 +18,7 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onImport()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(onOptions()));
+    connect(ui->actionOpenInNewWindow, SIGNAL(triggered()), this, SLOT(openInExternalWindow()));
 
     ui->tableView->setupModel();
 
@@ -54,6 +56,18 @@ void MainWindow::onOptions()
 {
     DialogOptions dlg(this);
     dlg.exec();
+}
+
+void MainWindow::openInExternalWindow(QString guid)
+{
+    if (!m_editWindows.contains(guid))
+    {
+        EditWindow *w = new EditWindow(this);
+        w->show();
+        m_editWindows[guid] = w;
+    }
+    else
+        static_cast<QMainWindow *>(m_editWindows[guid])->activateWindow();
 }
 
 void MainWindow::writeSettings()
