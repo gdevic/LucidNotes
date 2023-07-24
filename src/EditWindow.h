@@ -1,5 +1,4 @@
-#ifndef EDITWINDOW_H
-#define EDITWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -23,5 +22,3 @@ private:
 private:
     Ui::EditWindow *ui;
 };
-
-#endif // EDITWINDOW_H

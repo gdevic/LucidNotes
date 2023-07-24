@@ -1,5 +1,4 @@
-#ifndef CLASSDATABASE_H
-#define CLASSDATABASE_H
+#pragma once
 
 #include <QtSql>
 
@@ -23,5 +22,3 @@ private:
     QString m_connectionName;
     QString m_lastError;
 };
-
-#endif // CLASSDATABASE_H

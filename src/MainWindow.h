@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include "ClassWorkspace.h"
 #include <QMainWindow>
@@ -33,5 +32,3 @@ private:
     QMap<QString, EditWindow *> m_editWindows; // A map of extra edit windows spawned by the user keyed by the note GUID
     ClassWorkspace &m_wks; // Workspace that this application window works on
 };
-
-#endif // MAINWINDOW_H

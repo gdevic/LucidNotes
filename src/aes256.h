@@ -20,8 +20,7 @@
  *     License along with Aes256.
  *     If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef AES256_H
-#define AES256_H
+#pragma once
 
 #include <vector>
 
@@ -83,5 +82,3 @@ private:
     void mix_columns(unsigned char *buffer);
     void mix_columns_inv(unsigned char *buffer);
 };
-
-#endif // AES256_H

@@ -1,5 +1,4 @@
-#ifndef WIDGETTEXTEDIT_H
-#define WIDGETTEXTEDIT_H
+#pragma once
 
 #include <QWidget>
 
@@ -37,5 +36,3 @@ private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
 };
-
-#endif // WIDGETTEXTEDIT_H

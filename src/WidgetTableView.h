@@ -1,5 +1,4 @@
-#ifndef WIDGETTABLEVIEW_H
-#define WIDGETTABLEVIEW_H
+#pragma once
 
 #include "ClassDatabase.h"
 #include <QWidget>
@@ -26,5 +25,3 @@ private:
     QSqlQueryModel m_model; // Query model to select just a subset of notes for our table
     QSortFilterProxyModel m_proxy; // Filter is needed to facilitate sorting of the query rows
 };
-
-#endif // WIDGETTABLEVIEW_H

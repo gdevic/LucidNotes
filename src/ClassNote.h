@@ -1,5 +1,4 @@
-#ifndef CLASSNOTE_H
-#define CLASSNOTE_H
+#pragma once
 
 #include "CTextDocument.h"
 #include <QDateTime>
@@ -42,5 +41,3 @@ private:
     QDateTime m_created; // Date/time a note has been created
     QDateTime m_updated; // Date/time a note has been last updated (text/title or other meta changed)
 };
-
-#endif // CLASSNOTE_H

@@ -1,5 +1,4 @@
-#ifndef CTEXTEDIT_H
-#define CTEXTEDIT_H
+#pragma once
 
 #include <QTextEdit>
 
@@ -12,5 +11,3 @@ public:
 signals:
 
 };
-
-#endif // CTEXTEDIT_H

@@ -1,5 +1,4 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include <QUuid>
 
@@ -21,5 +20,3 @@ static inline ByteArray str2ba(QString s)
         ba.push_back(raw.at(i));
     return ba;
 }
-
-#endif // UTILS_H

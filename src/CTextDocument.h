@@ -1,5 +1,4 @@
-#ifndef CTEXTDOCUMENT_H
-#define CTEXTDOCUMENT_H
+#pragma once
 
 #include <QTextDocument>
 
@@ -12,5 +11,3 @@ public:
 signals:
 
 };
-
-#endif // CTEXTDOCUMENT_H

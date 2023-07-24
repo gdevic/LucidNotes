@@ -1,5 +1,4 @@
-#ifndef CLASSENEX_H
-#define CLASSENEX_H
+#pragma once
 
 #include <QXmlStreamReader>
 
@@ -23,5 +22,3 @@ private:
 private:
     QList<ClassNote *> m_notes {};
 };
-
-#endif // CLASSENEX_H
