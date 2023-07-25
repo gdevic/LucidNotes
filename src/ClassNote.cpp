@@ -1,14 +1,13 @@
 #include "ClassNote.h"
 #include "ClassEnex.h"
 #include "aes256.h"
-#include "Utils.h"
 #include <QDir>
 #include <QFile>
 #include <QStringBuilder>
 
-ClassNote::ClassNote(QObject *parent)
-    : QObject(parent)
-    , m_uuid8(getUUID8())
+ClassNote::ClassNote(QString guid)
+    : CTextDocument(nullptr)
+    , m_uuid8(guid)
     , m_title("Untitled")
     , m_author("Anonymous")
 {
@@ -51,8 +50,8 @@ bool ClassNote::loadBlob(QString blobFileName, bool compress, bool encrypt, QStr
             qWarning() << "loadFromBlob could not decompress the blob (corrupted file or invalid key)";
             return false;
         }
-        m_doc.setHtml(html);
-        //m_title = (m_doc->metaInformation(QTextDocument::DocumentTitle));
+        setHtml(html);
+        m_title = metaInformation(QTextDocument::DocumentTitle);
         return true;
     }
     return false;
@@ -66,8 +65,8 @@ bool ClassNote::saveBlob(QString blobFileName, bool compress, bool encrypt, QStr
 {
     qInfo() << "saveToBlob" << blobFileName << "compress:" << compress << "encrypt:" << encrypt << "key:" << key;
 
-    //m_doc->setMetaInformation(QTextDocument::DocumentTitle, m_title);
-    QString html = m_doc.toHtml();
+    setMetaInformation(QTextDocument::DocumentTitle, m_title);
+    QString html = toHtml();
     QByteArray ba = html.toUtf8();
     QByteArray cba = compress ? qCompress(ba, 9) : ba;
 
@@ -108,7 +107,7 @@ bool ClassNote::readNote(QXmlStreamReader &xml)
             {
                 if (readSection(xml, "title") == false)
                     return false;
-                m_doc.setMetaInformation(QTextDocument::DocumentTitle, s);
+                setMetaInformation(QTextDocument::DocumentTitle, s);
                 m_title = s;
                 qInfo() << "Title:" << s;
             }
@@ -117,8 +116,8 @@ bool ClassNote::readNote(QXmlStreamReader &xml)
             {
                 if (readSection(xml, "content") == false)
                     return false;
-                m_doc.setHtml(s);
-                m_summary = m_doc.toPlainText().left(200).replace('\n', ' ');
+                setHtml(s);
+                m_summary = toPlainText().left(200).replace('\n', ' ');
             }
 
             if (xml.name().toString() == "created")

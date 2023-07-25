@@ -85,9 +85,19 @@ void WidgetTextEdit::showToolbar(bool shown)
     settings.setValue("editingToolbar", shown);
 }
 
-void WidgetTextEdit::setDoc(QTextDocument *doc)
+//void WidgetTextEdit::setDoc(QTextDocument *doc)
+//{
+//    m_noteEdit->setDocument(doc);
+//}
+
+/*
+ * Sets the note to be edited
+ */
+void WidgetTextEdit::loadNote(ClassNote &note)
 {
-    m_noteEdit->setDocument(doc);
+    qInfo() << "loadNote";
+    m_noteEdit->setDocument(static_cast<QTextDocument *>(&note));
+    m_titleEdit->setText(note.title());
 }
 
 void WidgetTextEdit::textFamily(const QString &f)

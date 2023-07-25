@@ -21,7 +21,7 @@ private slots:
     void onImport();
     void closeEvent(QCloseEvent *event);
     void onOptions();
-    void openInExternalWindow(QString guid = QString()); // XXX
+    void openInExternalEditor(ClassNote &note); // XXX
 
 private:
     void writeSettings();

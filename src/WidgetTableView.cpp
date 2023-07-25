@@ -4,7 +4,9 @@
 WidgetTableView::WidgetTableView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::WidgetTableView),
-    m_db(this)
+    m_db(this),
+    m_model(this),
+    m_proxy(this)
 {
     ui->setupUi(this);
 
@@ -14,8 +16,25 @@ WidgetTableView::WidgetTableView(QWidget *parent) :
     ui->tableNotes->verticalHeader()->setMinimumSectionSize(vsize);
     ui->tableNotes->verticalHeader()->setDefaultSectionSize(vsize);
 
-    connect(ui->tableNotes, SIGNAL(clicked(const QModelIndex&)), this, SLOT(cellSingleClicked(const QModelIndex&)));
-    connect(ui->tableNotes, SIGNAL(activated(const QModelIndex&)), this, SLOT(cellDoubleClicked(const QModelIndex&)));
+    /*
+     * User single-clicked on a table cell
+     */
+    connect(ui->tableNotes, &QTableView::clicked, this, [=](const QModelIndex &index)
+    {
+        QString guid = m_model.index(m_proxy.mapToSource(index).row(), 1).data().toString();
+        qInfo() << "Single clicked" << guid;
+        emit noteSingleClicked(guid);
+    });
+
+    /*
+     * User double-clicked on a table cell
+     */
+    connect(ui->tableNotes, &QTableView::activated, this, [=](const QModelIndex &index)
+    {
+        QString guid = m_model.index(m_proxy.mapToSource(index).row(), 1).data().toString();
+        qInfo() << "Double clicked" << guid;
+        emit noteDoubleClicked(guid);
+    });
 }
 
 WidgetTableView::~WidgetTableView()
@@ -37,16 +56,4 @@ bool WidgetTableView::setupModel()
     ui->tableNotes->setModel(&m_proxy);
 
     return true;
-}
-
-void WidgetTableView::cellSingleClicked(const QModelIndex &index)
-{
-    QString guid = m_model.index(index.row(), 1).data().toString();
-    qInfo() << "Single clicked" << guid;
-}
-
-void WidgetTableView::cellDoubleClicked(const QModelIndex &index)
-{
-    QString guid = m_model.index(index.row(), 1).data().toString();
-    qInfo() << "Double clicked" << guid;
 }

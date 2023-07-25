@@ -100,3 +100,27 @@ bool ClassWorkspace::addNote(ClassNote *note)
         qWarning() << "Unable to save note blob";
     return false;
 }
+
+/*
+ * Open a note with the specified guid to be edited. It creates a note class in memory and sends it to either
+ * the main editor or the extra windowed editor which is used when the user double-clicks on a note in the table.
+ */
+void ClassWorkspace::onNoteOpen(QString guid, bool useMainEditor)
+{
+    qInfo() << "onNoteOpen" << useMainEditor << guid;
+    // Find if that note is already instantiated or we need to create and load it
+    if (!m_notes.contains(guid))
+    {
+        ClassNote *note = new ClassNote(guid);
+        note->loadBlob(m_wksDataDir);
+        m_notes[guid] = note;
+    }
+
+    if (useMainEditor)
+        emit mainEditorLoadNote(*m_notes[guid]);
+    else
+        emit auxEditorLoadNote(*m_notes[guid]);
+
+    QSettings settings;
+    settings.setValue("lruNote", guid);
+}

@@ -18,15 +18,28 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onImport()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(onOptions()));
-    connect(ui->actionOpenInNewWindow, SIGNAL(triggered()), this, SLOT(openInExternalWindow()));
+//    connect(ui->actionOpenInNewWindow, &QAction::triggered, this, [=]() { m_wks.onNoteOpen(guid, true); });
+//    connect(ui->actionOpenInNewWindow, SIGNAL(triggered()), this, SLOT(openInExternalWindow()));
 
     ui->tableView->setupModel();
+
+    // When the user single- and double-clicks on a note in the table view, load that note into the main/aux editor
+    connect(ui->tableView, &WidgetTableView::noteSingleClicked, this, [=](QString guid) { m_wks.onNoteOpen(guid, true); });
+    connect(ui->tableView, &WidgetTableView::noteDoubleClicked, this, [=](QString guid) { m_wks.onNoteOpen(guid, false); });
+
+    // The workspace signals the main editor or the aux editor to load a specific note
+    connect(&m_wks, SIGNAL(mainEditorLoadNote(ClassNote&)), ui->textEdit, SLOT(loadNote(ClassNote&)));
+    connect(&m_wks, SIGNAL(auxEditorLoadNote(ClassNote&)), this, SLOT(openInExternalEditor(ClassNote&)));
 
     // Testing the main view
     connect(ui->actionViewHorizontal, &QAction::triggered, this, [=]() { ui->splitter->setOrientation(Qt::Horizontal); });
     connect(ui->actionViewVertical, &QAction::triggered, this, [=]() { ui->splitter->setOrientation(Qt::Vertical); });
 
     readSettings();
+
+    // Load last recently used note
+    QSettings settings;
+    wks.onNoteOpen(settings.value("lruNote", QString()).toString());
 }
 
 MainWindow::~MainWindow()
@@ -58,16 +71,16 @@ void MainWindow::onOptions()
     dlg.exec();
 }
 
-void MainWindow::openInExternalWindow(QString guid)
+void MainWindow::openInExternalEditor(ClassNote &note)
 {
-    if (!m_editWindows.contains(guid))
+    if (!m_editWindows.contains(note.guid()))
     {
-        EditWindow *w = new EditWindow(this);
+        EditWindow *w = new EditWindow(this, note);
         w->show();
-        m_editWindows[guid] = w;
+        m_editWindows[note.guid()] = w;
     }
     else
-        static_cast<QMainWindow *>(m_editWindows[guid])->activateWindow();
+        static_cast<QMainWindow *>(m_editWindows[note.guid()])->activateWindow();
 }
 
 void MainWindow::writeSettings()

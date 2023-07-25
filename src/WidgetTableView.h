@@ -15,9 +15,9 @@ public:
     ~WidgetTableView();
     bool setupModel();
 
-public slots:
-    void cellSingleClicked(const QModelIndex &index);
-    void cellDoubleClicked(const QModelIndex &index);
+signals:
+    void noteSingleClicked(QString guid);
+    void noteDoubleClicked(QString guid);
 
 private:
     Ui::WidgetTableView *ui;

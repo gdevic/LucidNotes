@@ -3,11 +3,13 @@
 #include <QCloseEvent>
 #include <QSettings>
 
-EditWindow::EditWindow(QWidget *parent) :
+EditWindow::EditWindow(QWidget *parent, ClassNote &note) :
     QMainWindow(parent),
     ui(new Ui::EditWindow)
 {
     ui->setupUi(this);
+
+    ui->textEdit->loadNote(note);
 
     readSettings();
 }

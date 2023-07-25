@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ClassNote.h"
 #include <QWidget>
 
 namespace Ui { class WidgetTextEdit; }
@@ -19,7 +20,8 @@ public:
 public slots:
     bool isToolbarVisible()           { return m_editingToolbar->isVisible(); }
     void showToolbar(bool shown);
-    void setDoc(QTextDocument *doc);
+    //void setDoc(QTextDocument *doc);
+    void loadNote(ClassNote &note);
 
 private slots:
     void textFamily(const QString &f);
