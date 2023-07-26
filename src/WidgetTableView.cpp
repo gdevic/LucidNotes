@@ -16,6 +16,10 @@ WidgetTableView::WidgetTableView(QWidget *parent) :
     ui->tableNotes->verticalHeader()->setMinimumSectionSize(vsize);
     ui->tableNotes->verticalHeader()->setDefaultSectionSize(vsize);
 
+    QSettings settings;
+    ui->tableNotes->horizontalHeader()->restoreState(settings.value("tableHeader").toByteArray());
+    ui->tableNotes->horizontalHeader()->setSectionsMovable(true);
+
     /*
      * User single-clicked on a table cell
      */
@@ -39,6 +43,9 @@ WidgetTableView::WidgetTableView(QWidget *parent) :
 
 WidgetTableView::~WidgetTableView()
 {
+    QSettings settings;
+    settings.setValue("tableHeader", ui->tableNotes->horizontalHeader()->saveState());
+
     delete ui;
 }
 
