@@ -17,6 +17,7 @@ SOURCES += \
     EditWindow.cpp \
     WidgetTableView.cpp \
     WidgetTextEdit.cpp \
+    WidgetTreeView.cpp \
     aes256.cpp \
     main.cpp \
     MainWindow.cpp
@@ -34,6 +35,7 @@ HEADERS += \
     Utils.h \
     WidgetTableView.h \
     WidgetTextEdit.h \
+    WidgetTreeView.h \
     aes256.h
 
 FORMS += \
@@ -41,9 +43,13 @@ FORMS += \
     EditWindow.ui \
     MainWindow.ui \
     WidgetTableView.ui \
-    WidgetTextEdit.ui
+    WidgetTextEdit.ui \
+    WidgetTreeView.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resources.qrc

@@ -14,14 +14,35 @@
    <string>Lucid Notes</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="splitterTree">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="WidgetTableView" name="tableView" native="true"/>
-      <widget class="WidgetTextEdit" name="textEdit" native="true"/>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="WidgetTreeView" name="treeView" native="true"/>
+      <widget class="QFrame" name="frame">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QSplitter" name="splitterEdit">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <widget class="WidgetTableView" name="tableView" native="true"/>
+          <widget class="WidgetTextEdit" name="textEdit" native="true"/>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -109,6 +130,12 @@
    <class>WidgetTableView</class>
    <extends>QWidget</extends>
    <header>WidgetTableView.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WidgetTreeView</class>
+   <extends>QWidget</extends>
+   <header>WidgetTreeView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

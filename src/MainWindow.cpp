@@ -13,6 +13,7 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     , ui(new Ui::MainWindow)
     , m_wks(wks)
 {
+    QSettings settings;
     ui->setupUi(this);
 
     connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onImport()));
@@ -32,18 +33,24 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     connect(&m_wks, SIGNAL(auxEditorLoadNote(ClassNote&)), this, SLOT(openInExternalEditor(ClassNote&)));
 
     // Testing the main view
-    connect(ui->actionViewHorizontal, &QAction::triggered, this, [=]() { ui->splitter->setOrientation(Qt::Horizontal); });
-    connect(ui->actionViewVertical, &QAction::triggered, this, [=]() { ui->splitter->setOrientation(Qt::Vertical); });
+    connect(ui->actionViewHorizontal, &QAction::triggered, this, [=]() { ui->splitterEdit->setOrientation(Qt::Horizontal); });
+    connect(ui->actionViewVertical, &QAction::triggered, this, [=]() { ui->splitterEdit->setOrientation(Qt::Vertical); });
 
     readSettings();
+    ui->splitterTree->restoreState(settings.value("splitterTree").toByteArray());
+    ui->splitterEdit->restoreState(settings.value("splitterEdit").toByteArray());
 
     // Load last recently used note
-    QSettings settings;
     wks.onNoteOpen(settings.value("lruNote", QString()).toString());
+
 }
 
 MainWindow::~MainWindow()
 {
+    QSettings settings;
+    settings.setValue("splitterTree", ui->splitterTree->saveState());
+    settings.setValue("splitterEdit", ui->splitterEdit->saveState());
+
     delete ui;
 }
 
