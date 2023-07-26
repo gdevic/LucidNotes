@@ -1,5 +1,23 @@
 <RCC>
     <qresource prefix="/">
         <file alias="plus">resources/plus.png</file>
+        <file alias="notebook">resources/notebook.png</file>
+        <file alias="notes">resources/notes.png</file>
+        <file alias="shared">resources/shared.png</file>
+        <file alias="shortcut">resources/shortcut.png</file>
+        <file alias="stacks">resources/stacks.png</file>
+        <file alias="tag">resources/tag.png</file>
+        <file alias="trash">resources/trash.png</file>
+        <file alias="add">resources/add.png</file>
+        <file alias="newnote">resources/newnote.png</file>
+        <file alias="next">resources/next.png</file>
+        <file alias="previous">resources/previous.png</file>
+        <file alias="search">resources/search.png</file>
+        <file alias="sync">resources/sync.png</file>
+        <file alias="dolphin16">resources/dolphin-16.png</file>
+        <file alias="dolphin24">resources/dolphin-24.png</file>
+        <file alias="dolphin32">resources/dolphin-32.png</file>
+        <file alias="dolphin64">resources/dolphin-64.png</file>
+        <file alias="dolphin256">resources/dolphin-256.png</file>
     </qresource>
 </RCC>

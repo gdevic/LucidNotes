@@ -1,0 +1,15 @@
+
+Dolphin       https://www.flaticon.com/free-icon/dolphin_427544
+Notes    24px https://www.flaticon.com/free-icon/notes_768869
+Notebook 24px https://www.flaticon.com/free-icon/note-book_9258365
+Shortcut 24px https://www.flaticon.com/free-icon/notes_2438240
+Tag      24px https://www.flaticon.com/free-icon/tag_4610875
+Trash    24px https://www.flaticon.com/free-icon/trash-can_542724
+Stacks   16px https://www.flaticon.com/free-icon/books_161399
+Shared   24px https://www.flaticon.com/free-icon/group_3394785
+Plus     24px https://www.flaticon.com/free-icon/add_9312231
+Search   24px https://www.flaticon.com/free-icon/search_149852
+Previous 24px https://www.flaticon.com/free-icon/back_130882
+Next     24px https://www.flaticon.com/free-icon/next_130884
+Sync     24px https://www.flaticon.com/free-icon/sync_3031712
+Newnote  24px https://www.flaticon.com/free-icon/reminder_9844732
