@@ -37,22 +37,30 @@ int main(int argc, char *argv[])
     initAppDefaults();
 
     QSettings settings;
-    // Initialize workspace folder and, if there is a new value ("armed value"), switch to it
-    if (settings.contains("workspaceDirNext"))
+    do
     {
-        // XXX Do we want to copy the workspace files over to a new directory?
-        settings.setValue("workspaceDir", settings.value("workspaceDirNext"));
-        settings.remove("workspaceDirNext");
-    }
-    settings.sync();
-    qInfo() << "Using workspace" << settings.value("workspaceDir");
+        settings.remove("restart");
 
-    ClassWorkspace wks(settings.value("workspaceDir").toString());
-    if (wks.init())
-    {
-        MainWindow w(wks);
-        w.show();
-        ret = a.exec();
+        // Initialize workspace folder and, if there is a new value ("armed value"), switch to it
+        if (settings.contains("workspaceDirNext"))
+        {
+            // XXX Do we want to copy the workspace files over to a new directory?
+            settings.setValue("workspaceDir", settings.value("workspaceDirNext"));
+            settings.remove("workspaceDirNext");
+        }
+        settings.sync();
+        qInfo() << "Using workspace" << settings.value("workspaceDir");
+
+        ClassWorkspace wks(settings.value("workspaceDir").toString());
+        if (wks.init())
+        {
+            MainWindow w(wks);
+            w.show();
+            ret = a.exec();
+        }
     }
+    // If the settings contain the key "restart", restart the application
+    while (settings.contains("restart"));
+
     return ret;
 }
