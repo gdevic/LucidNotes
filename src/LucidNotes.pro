@@ -17,6 +17,7 @@ SOURCES += \
     EditWindow.cpp \
     WidgetTableView.cpp \
     WidgetTextEdit.cpp \
+    WidgetTreeButton.cpp \
     WidgetTreeView.cpp \
     aes256.cpp \
     main.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     Utils.h \
     WidgetTableView.h \
     WidgetTextEdit.h \
+    WidgetTreeButton.h \
     WidgetTreeView.h \
     aes256.h
 
@@ -44,6 +46,7 @@ FORMS += \
     MainWindow.ui \
     WidgetTableView.ui \
     WidgetTextEdit.ui \
+    WidgetTreeButton.ui \
     WidgetTreeView.ui
 
 # Default rules for deployment.

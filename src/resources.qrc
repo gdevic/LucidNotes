@@ -21,5 +21,6 @@
         <file alias="dolphin256">resources/dolphin-256.png</file>
         <file alias="arrow_down">resources/arrow-down.png</file>
         <file alias="arrow_right">resources/arrow-right.png</file>
+        <file alias="empty">resources/empty.png</file>
     </qresource>
 </RCC>

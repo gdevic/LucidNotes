@@ -6,16 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>356</width>
-    <height>749</height>
+    <width>294</width>
+    <height>450</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="leftMargin">
+      <number>6</number>
+     </property>
+     <property name="bottomMargin">
+      <number>12</number>
+     </property>
      <item>
       <widget class="QPushButton" name="btNewNote">
        <property name="font">
@@ -72,6 +90,24 @@ background-color: rgb(20, 153, 240);
    </item>
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="styleSheet">
+      <string notr="true">QScrollBar:vertical {
+	border: none;
+	background: rgb(75, 75, 75);
+	width: 14px;
+	margin: 15px 0 15px 0;
+	border-radius: 0px;
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -80,15 +116,163 @@ background-color: rgb(20, 153, 240);
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>336</width>
-        <height>681</height>
+        <width>294</width>
+        <height>397</height>
        </rect>
       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="WidgetTreeButton" name="tbShortcuts">
+         <property name="text">
+          <string>Shortcuts</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/shortcut</normaloff>:/shortcut</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="WidgetTreeButton" name="tbAllNotes">
+         <property name="text">
+          <string>All Notes</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/notes</normaloff>:/notes</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="WidgetTreeButton" name="tbNotebooks">
+         <property name="text">
+          <string>Notebooks</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/notebook</normaloff>:/notebook</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="WidgetTreeButton" name="tbShared">
+         <property name="text">
+          <string>Shared with Me</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/shared</normaloff>:/shared</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="WidgetTreeButton" name="tbTags">
+         <property name="text">
+          <string>Tags</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/tag</normaloff>:/tag</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="WidgetTreeButton" name="tbTrash">
+         <property name="text">
+          <string>Trash</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/trash</normaloff>:/trash</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeView" name="treeView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="autoScroll">
+          <bool>false</bool>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>true</bool>
+         </property>
+         <property name="uniformRowHeights">
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeView" name="treeView_2">
+         <property name="uniformRowHeights">
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WidgetTreeButton</class>
+   <extends>QPushButton</extends>
+   <header>WidgetTreeButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>
