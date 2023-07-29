@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "ClassEnex.h"
 #include "DialogOptions.h"
+#include "DialogImportEnex.h"
 #include "EditWindow.h"
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -17,7 +17,7 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     QSettings settings;
     ui->setupUi(this);
 
-    connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onImport()));
+    connect(ui->actionImportENEX, SIGNAL(triggered(bool)), this, SLOT(onImportEnex()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(onOptions()));
 //    connect(ui->actionOpenInNewWindow, &QAction::triggered, this, [=]() { m_wks.onNoteOpen(guid, true); });
@@ -41,7 +41,6 @@ MainWindow::MainWindow(ClassWorkspace &wks)
 
     // Load last recently used note
     wks.onNoteOpen(settings.value("lruNote", QString()).toString());
-
 }
 
 MainWindow::~MainWindow()
@@ -50,16 +49,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onImport()
+/*
+ * Import Evernote exported files
+ */
+void MainWindow::onImportEnex()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Import ENEX Notes", "", "Enex notes (*.enex);;All files (*.*)");
-    if(!fileName.isNull())
-    {
-        ClassEnex enex;
-        enex.import(fileName);
-        foreach (auto note, enex.getNotes())
-            m_wks.addNote(note);
-    }
+    DialogImportEnex enex(this, &m_wks);
+    enex.exec();
+
+    ui->tableView->setupModel();
 }
 
 void MainWindow::onOptions()

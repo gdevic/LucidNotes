@@ -10,10 +10,22 @@ ClassEnex::ClassEnex(QObject *parent)
 
 ClassEnex::~ClassEnex()
 {
-    qDeleteAll(m_notes);
+    clear();
 }
 
-bool ClassEnex::import(QString fileName)
+void ClassEnex::clear()
+{
+    qDeleteAll(m_notes);
+    m_notes.clear();
+//    thID = nullptr;
+    is_cancelled = false;
+}
+
+/*
+ * Reads a list of Evernote notes in ENEX format into the internal list structure
+ * Returns an empty string on success or a text describing the failure
+ */
+const QString ClassEnex::import(const QString fileName)
 {
     qInfo() << "Importing from:" << fileName;
 
@@ -23,7 +35,7 @@ bool ClassEnex::import(QString fileName)
     {
         QXmlStreamReader xml(&inFile);
 
-        while (!xml.atEnd())
+        while (!xml.atEnd() && !is_cancelled)
         {
             xml.readNext();
 
@@ -34,21 +46,21 @@ bool ClassEnex::import(QString fileName)
             if ((xml.name().toString() == "en-export") && xml.isStartElement())
             {
                 if (readExport(xml) == false)
-                    return false;
+                    return is_cancelled ? "Note import canceled by user" : "Error reading a note";
             }
         }
         qInfo() << "Imported" << m_notes.count() << "notes.";
-        return true;
     }
     else
-        qCritical() << "Unable to open XML file" << fileName << inFile.error() << inFile.errorString();
-    return false;
+        return QString("Unable to open XML file %1 %2 %3").arg(fileName).arg(inFile.error()).arg(inFile.errorString());
+
+    return is_cancelled ? "Note import canceled by user" : QString();
 }
 
 // Reads the export section and every note that is defined within it
 bool ClassEnex::readExport(QXmlStreamReader &xml)
 {
-    while (!xml.atEnd())
+    while (!xml.atEnd() || is_cancelled) // Loop until cancelled or at the (unexpected!) end of the XML document
     {
         xml.readNext();
 
@@ -67,7 +79,7 @@ bool ClassEnex::readExport(QXmlStreamReader &xml)
     return false;
 }
 
-QString ClassEnex::tokenType(QXmlStreamReader &xml)
+const QString ClassEnex::tokenType(QXmlStreamReader &xml)
 {
     switch (xml.tokenType())
     {

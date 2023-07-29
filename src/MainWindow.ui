@@ -76,7 +76,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionImport"/>
+    <addaction name="actionImportENEX"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -114,11 +114,6 @@
     <string>Options</string>
    </property>
   </action>
-  <action name="actionImport">
-   <property name="text">
-    <string>Import...</string>
-   </property>
-  </action>
   <action name="actionViewHorizontal">
    <property name="text">
     <string>Horizontal</string>
@@ -132,6 +127,11 @@
   <action name="actionOpenInNewWindow">
    <property name="text">
     <string>Open In a New Window</string>
+   </property>
+  </action>
+  <action name="actionImportENEX">
+   <property name="text">
+    <string>Import ENEX...</string>
    </property>
   </action>
  </widget>

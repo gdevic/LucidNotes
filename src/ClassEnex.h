@@ -11,14 +11,15 @@ public:
     explicit ClassEnex(QObject *parent = nullptr);
     ~ClassEnex();
 
-    bool import(QString fileName);
-    QList<ClassNote *> &getNotes() { return m_notes; }
+    const QString import(const QString fileName);
+    void cancel() { is_cancelled = true; }
+    void clear();
 
-    static QString tokenType(QXmlStreamReader &xml);
+    QList<ClassNote *> m_notes;
+//    QThread *thID {nullptr};
 
 private:
+    const QString tokenType(QXmlStreamReader &xml);
     bool readExport(QXmlStreamReader &xml);
-
-private:
-    QList<ClassNote *> m_notes {};
+    bool is_cancelled {false};
 };

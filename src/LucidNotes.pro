@@ -1,4 +1,4 @@
-QT += core gui widgets sql
+QT += core gui widgets sql concurrent
 
 CONFIG += c++17
 
@@ -13,6 +13,7 @@ SOURCES += \
     ClassEnex.cpp \
     ClassNote.cpp \
     ClassWorkspace.cpp \
+    DialogImportEnex.cpp \
     DialogOptions.cpp \
     EditWindow.cpp \
     WidgetTableView.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     ClassEnex.h \
     ClassNote.h \
     ClassWorkspace.h \
+    DialogImportEnex.h \
     DialogOptions.h \
     EditWindow.h \
     MainWindow.h \
@@ -41,6 +43,7 @@ HEADERS += \
     aes256.h
 
 FORMS += \
+    DialogImportEnex.ui \
     DialogOptions.ui \
     EditWindow.ui \
     MainWindow.ui \

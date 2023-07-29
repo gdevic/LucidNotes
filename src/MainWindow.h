@@ -18,7 +18,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void onImport();
+    void onImportEnex();
     void onOptions();
     void openInExternalEditor(ClassNote &note); // XXX
 
