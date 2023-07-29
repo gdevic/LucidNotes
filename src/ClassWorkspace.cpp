@@ -27,8 +27,14 @@ bool ClassWorkspace::init()
     }
 #endif
 
-    if (!m_db.open("workspace"))
+    QString ret = m_db.open("workspace");
+    if (!ret.isEmpty())
+    {
+        QMessageBox::critical(nullptr, "Notes",
+            "Unable to initialize local SQLite database:\n" + ret +
+            "\nPlease make sure this application is installed correctly.\n");
         return false;
+    }
 
     // Initialize database with the tables used by the workspace class
 

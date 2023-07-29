@@ -19,12 +19,14 @@ ClassDatabase::~ClassDatabase()
 }
 
 /*
- * Creates and/or initializes the database file
+ * Creates and/or initializes the database file, which can optionally be specified, and if not,
+ * the function will use the default workspace app notes' database.
+ * Returns an empty string on success or the error message describing the error, on error.
  */
-bool ClassDatabase::open(QString connectionName)
+QString ClassDatabase::open(const QString connectionName, QString databaseFileName)
 {
     m_connectionName = connectionName;
-    QString err;
+    QString ret;
     qInfo() << "Available database drivers:" << QSqlDatabase::drivers();
     if (QSqlDatabase::isDriverAvailable("QSQLITE"))
     {
@@ -32,21 +34,19 @@ bool ClassDatabase::open(QString connectionName)
 
         // The main SQLite database is always located in the current workspace directory
         QSettings settings;
-        QString dbName = settings.value("workspaceDir").toString() + "/notes.db";
+        QString dbName = databaseFileName.isEmpty() ? settings.value("workspaceDir").toString() + "/notes.db"
+                                                    : databaseFileName;
         qInfo() << "Database file:" << dbName;
         m_db.setDatabaseName(dbName);
 
         if (m_db.open())
-            return true;
+            return QString();
 
-        err = m_db.lastError().driverText() + " " + m_db.lastError().databaseText();
+        ret = m_db.lastError().driverText() + " " + m_db.lastError().databaseText();
     }
     else
-        err = "QSQLITE driver is not available!";
-    QMessageBox::critical(nullptr, "Notes",
-        "Unable to initialize local SQLite database:\n" + err +
-        "\nPlease make sure this application is installed correctly.\n");
-    return false;
+        ret = "QSQLITE driver is not available!";
+    return ret;
 }
 
 /*

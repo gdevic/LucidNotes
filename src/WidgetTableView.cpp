@@ -51,8 +51,9 @@ WidgetTableView::~WidgetTableView()
 
 bool WidgetTableView::setupModel()
 {
-    if (!m_db.open("table"))
-        return false;
+    QString ret = m_db.open("table");
+    if (!ret.isEmpty())
+        return false; // XXX Handle errors
 
     // XXX Set any kind of query, like: "SELECT * FROM note_attr WHERE author = 'anonymous'"
     m_model.setQuery("SELECT * FROM note_attr", m_db.getDB());
