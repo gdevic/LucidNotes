@@ -12,7 +12,7 @@ class ClassDatabase : public QObject
 {
     Q_OBJECT
 public:
-    ClassDatabase(QObject *parent);
+    explicit ClassDatabase(QObject *parent = nullptr);
     ~ClassDatabase();
     QString open(const QString connectionName, QString databaseFileName = QString());
     bool queryExec(const QStringList &commands);

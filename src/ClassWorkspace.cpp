@@ -1,5 +1,6 @@
-#include "ClassWorkspace.h"
+#include "ClassDatabase.h"
 #include "ClassNote.h"
+#include "ClassWorkspace.h"
 #include <QMessageBox>
 
 ClassWorkspace::ClassWorkspace(QString wksDir)
@@ -7,7 +8,6 @@ ClassWorkspace::ClassWorkspace(QString wksDir)
     , m_wksDir(wksDir)
     , m_wksDataDir(wksDir + "/Data")
     , m_lockFile(wksDir + "/.lock")
-    , m_db(this)
 {
     // Create the workspace Data folder if it does not exist
     QDir dir; dir.mkpath(m_wksDataDir);
@@ -27,7 +27,8 @@ bool ClassWorkspace::init()
     }
 #endif
 
-    QString ret = m_db.open("workspace");
+    ClassDatabase db;
+    QString ret = db.open("workspace");
     if (!ret.isEmpty())
     {
         QMessageBox::critical(nullptr, "Notes",
@@ -60,9 +61,9 @@ bool ClassWorkspace::init()
          "date_updated REAL, "                   // Date and time the note was last edited/changed
          "flags INTEGER);"}                      // Flags bitmap
     };
-    if (!m_db.queryExec(commands))
+    if (!db.queryExec(commands))
     {
-        QMessageBox::critical(nullptr, "Notes", "Unable to initialize database defaults.\n\n" + m_db.getLastSqlError());
+        QMessageBox::critical(nullptr, "Notes", "Unable to initialize database defaults.\n\n" + db.getLastSqlError());
         return false;
     }
     return true;
@@ -78,6 +79,10 @@ bool ClassWorkspace::addNote(ClassNote *note)
     // Tell the note to save its document as a file data blob (the text of the note, which we do not put in the database)
     if (note->saveBlob(m_wksDataDir))
     {
+        ClassDatabase db;
+        QString ret = db.open("workspace");
+        Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
+
         static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook_id, date_created, date_updated, flags)"
                                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         QStringList binds;
@@ -89,7 +94,7 @@ bool ClassWorkspace::addNote(ClassNote *note)
         binds << note->created().toString(Qt::ISODate);
         binds << note->updated().toString(Qt::ISODate);
         binds << "0";
-        int lastID = m_db.queryExec(command, binds);
+        int lastID = db.queryExec(command, binds);
         qInfo() << "lastID" << lastID;
         if (lastID)
         {
@@ -97,7 +102,7 @@ bool ClassWorkspace::addNote(ClassNote *note)
             return true;
         }
         else
-            qWarning() << "Unable to add a note" << m_db.getLastSqlError();
+            qWarning() << "Unable to add a note" << db.getLastSqlError();
 
         // Since adding to the database did not suceed, remove the file data blob
         note->deleteBlob(m_wksDataDir);

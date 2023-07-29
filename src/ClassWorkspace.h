@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ClassDatabase.h"
+#include <QObject>
+#include <QMap>
 #include <QLockFile>
 
 class ClassNote;
@@ -27,7 +28,6 @@ private:
     QString m_wksDir; // Workspace root directory
     QString m_wksDataDir; // Workspace data directory (for document blobs)
     QLockFile m_lockFile; // Workspace lock file (in the workspace root directory)
-    ClassDatabase m_db; // SQLite database connection supporting this workspace
 
     QMap<QString, ClassNote *> m_notes; // A list of instantiated notes
 };
