@@ -5,6 +5,8 @@
 /*
  * This class implements database object and operations on a SQLite database.
  * Each instance of this class represents a separate connection.
+ * The connection needs to be opened by calling "open()" and is closed
+ * when this class destructs.
  */
 class ClassDatabase : public QObject
 {

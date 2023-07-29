@@ -22,6 +22,7 @@ ClassDatabase::~ClassDatabase()
  * Creates and/or initializes the database file, which can optionally be specified, and if not,
  * the function will use the default workspace app notes' database.
  * Returns an empty string on success or the error message describing the error, on error.
+ * After a successful return from this call, the connection is opened and can be used for DB queries.
  */
 QString ClassDatabase::open(const QString connectionName, QString databaseFileName)
 {

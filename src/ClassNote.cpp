@@ -1,5 +1,4 @@
 #include "ClassNote.h"
-#include "ClassEnex.h"
 #include "aes256.h"
 #include <QDir>
 #include <QFile>
@@ -97,9 +96,9 @@ bool ClassNote::readNote(QXmlStreamReader &xml)
     {
         xml.readNext();
 
-        qInfo() << "TYPE:" << ClassEnex::tokenType(xml);
-        qInfo() << "NAME:" << xml.name() << (xml.isStartElement() ? "START" : (xml.isEndElement() ? "END" : ""));
-        qInfo() << "TEXT:" << xml.text();
+//        qInfo() << "TYPE:" << ClassEnex::tokenType(xml);
+//        qInfo() << "NAME:" << xml.name() << (xml.isStartElement() ? "START" : (xml.isEndElement() ? "END" : ""));
+//        qInfo() << "TEXT:" << xml.text();
 
         if (xml.isStartElement())
         {
