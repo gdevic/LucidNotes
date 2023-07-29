@@ -19,13 +19,12 @@ public:
 
 private slots:
     void onImport();
-    void closeEvent(QCloseEvent *event);
     void onOptions();
     void openInExternalEditor(ClassNote &note); // XXX
 
 private:
-    void writeSettings();
-    void readSettings();
+    void saveWindowGeometry();
+    void restoreWindowGeometry();
 
 private:
     Ui::MainWindow *ui;

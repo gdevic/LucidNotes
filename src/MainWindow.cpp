@@ -1,10 +1,11 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "DialogOptions.h"
 #include "ClassEnex.h"
+#include "DialogOptions.h"
 #include "EditWindow.h"
 #include <QCloseEvent>
 #include <QFileDialog>
+#include <QScreen>
 #include <QSettings>
 #include <QSplitter>
 
@@ -36,9 +37,7 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     connect(ui->actionViewHorizontal, &QAction::triggered, this, [=]() { ui->splitterEdit->setOrientation(Qt::Horizontal); });
     connect(ui->actionViewVertical, &QAction::triggered, this, [=]() { ui->splitterEdit->setOrientation(Qt::Vertical); });
 
-    readSettings();
-    ui->splitterTree->restoreState(settings.value("splitterTree").toByteArray());
-    ui->splitterEdit->restoreState(settings.value("splitterEdit").toByteArray());
+    restoreWindowGeometry();
 
     // Load last recently used note
     wks.onNoteOpen(settings.value("lruNote", QString()).toString());
@@ -47,10 +46,7 @@ MainWindow::MainWindow(ClassWorkspace &wks)
 
 MainWindow::~MainWindow()
 {
-    QSettings settings;
-    settings.setValue("splitterTree", ui->splitterTree->saveState());
-    settings.setValue("splitterEdit", ui->splitterEdit->saveState());
-
+    saveWindowGeometry();
     delete ui;
 }
 
@@ -64,12 +60,6 @@ void MainWindow::onImport()
         foreach (auto note, enex.getNotes())
             m_wks.addNote(note);
     }
-}
-
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    writeSettings();
-    event->accept();
 }
 
 void MainWindow::onOptions()
@@ -90,18 +80,27 @@ void MainWindow::openInExternalEditor(ClassNote &note)
         static_cast<QMainWindow *>(m_editWindows[note.guid()])->activateWindow();
 }
 
-void MainWindow::writeSettings()
+void MainWindow::saveWindowGeometry()
 {
     QSettings settings;
+    settings.setValue("splitterTree", ui->splitterTree->saveState());
+    settings.setValue("splitterEdit", ui->splitterEdit->saveState());
     settings.setValue("mainWindowGeometry", saveGeometry());
 }
 
-void MainWindow::readSettings()
+void MainWindow::restoreWindowGeometry()
 {
     QSettings settings;
-    const auto geometry = settings.value("mainWindowGeometry", QByteArray()).toByteArray();
-    if (geometry.isEmpty())
-        setGeometry(200, 200, 400, 400);
+    ui->splitterTree->setStretchFactor(0, 1);
+    ui->splitterTree->setStretchFactor(1, 4);
+    ui->splitterTree->restoreState(settings.value("splitterTree").toByteArray());
+    ui->splitterEdit->restoreState(settings.value("splitterEdit").toByteArray());
+    if (!settings.contains("mainWindowGeometry"))
+    {
+        QScreen *screen = QApplication::screenAt(QPoint(0,0));
+        QRect w = screen->availableGeometry();
+        setGeometry(w.center().x() - 500, w.center().y() - 350, 1000, 700);
+    }
     else
-        restoreGeometry(geometry);
+        restoreGeometry(settings.value("mainWindowGeometry", QByteArray()).toByteArray());
 }
