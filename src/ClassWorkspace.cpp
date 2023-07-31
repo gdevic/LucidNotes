@@ -80,7 +80,7 @@ bool ClassWorkspace::addNote(ClassNote *note)
     if (note->saveBlob(m_wksDataDir))
     {
         ClassDatabase db;
-        QString ret = db.open("workspace");
+        QString ret = db.open("addNote");
         Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
 
         static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook_id, date_created, date_updated, flags)"
