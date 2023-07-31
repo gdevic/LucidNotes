@@ -8,14 +8,18 @@ ClassDatabase::ClassDatabase(QObject *parent)
 
 ClassDatabase::~ClassDatabase()
 {
-    if (!QSqlDatabase::contains(m_connectionName))
-        return;
-    else
-    {
-        QSqlDatabase db = QSqlDatabase::database(m_connectionName);
-        db.close();
-    }
-    QSqlDatabase::removeDatabase(m_connectionName);
+//    QSqlDatabase db = QSqlDatabase::database(m_connectionName);
+//    db.close();
+//    QSqlDatabase::removeDatabase(m_connectionName);
+
+//    if (!QSqlDatabase::contains(m_connectionName))
+//        return;
+//    else
+//    {
+//        QSqlDatabase db = QSqlDatabase::database(m_connectionName);
+//        db.close();
+//    }
+//    QSqlDatabase::removeDatabase(m_connectionName);
 }
 
 /*
