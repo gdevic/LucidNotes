@@ -13,10 +13,9 @@ public:
 
     const QString import(const QString fileName);
     void cancel() { is_cancelled = true; }
-    void clear();
 
     QList<ClassNote *> m_notes;
-//    QThread *thID {nullptr};
+    QThread *thID {nullptr};
 
 private:
     const QString tokenType(QXmlStreamReader &xml);

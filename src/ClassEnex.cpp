@@ -10,15 +10,7 @@ ClassEnex::ClassEnex(QObject *parent)
 
 ClassEnex::~ClassEnex()
 {
-    clear();
-}
-
-void ClassEnex::clear()
-{
     qDeleteAll(m_notes);
-    m_notes.clear();
-//    thID = nullptr;
-    is_cancelled = false;
 }
 
 /*
@@ -28,6 +20,10 @@ void ClassEnex::clear()
 const QString ClassEnex::import(const QString fileName)
 {
     qInfo() << "Importing from:" << fileName;
+
+    qDeleteAll(m_notes);
+    m_notes.clear();
+    is_cancelled = false;
 
     QFile inFile(fileName);
 
@@ -71,7 +67,11 @@ bool ClassEnex::readExport(QXmlStreamReader &xml)
             if (note->readNote(xml) == false) // Ignore a note that fails to load XXX can we contine reading XML?
                 delete note;
             else
+            {
+                if (thID)
+                    note->moveToThread(thID);
                 m_notes.append(note);
+            }
         }
         if ((xml.name().toString() == "en-export") && xml.isEndElement())
             return true;
