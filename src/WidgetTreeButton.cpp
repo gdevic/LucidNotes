@@ -1,5 +1,6 @@
 #include "WidgetTreeButton.h"
 #include "ui_WidgetTreeButton.h"
+#include <QSettings>
 
 WidgetTreeButton::WidgetTreeButton(QWidget *parent) :
     QPushButton(parent),
@@ -17,6 +18,9 @@ WidgetTreeButton::WidgetTreeButton(QWidget *parent) :
 
 WidgetTreeButton::~WidgetTreeButton()
 {
+    QSettings settings;
+    settings.setValue(objectName() + "Expanded", ui->pbArrow->isChecked());
+
     delete ui;
 }
 
@@ -28,6 +32,11 @@ void WidgetTreeButton::init(bool hasTree, bool hasAdd, bool hasSearch, const QSt
     setToolTip(tip);
     ui->pbPlus->setToolTip(tipAdd);
     ui->pbSearch->setToolTip(tipSearch);
+
+    QSettings settings;
+    bool isExpanded = settings.value(objectName() + "Expanded", true).toBool();
+    ui->pbArrow->setChecked(isExpanded);
+    emit expandClicked(isExpanded);
 }
 
 /*

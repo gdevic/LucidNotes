@@ -16,14 +16,15 @@ public:
     void setText(const QString text);
     void setIcon(const QIcon &icon);
 
-    virtual void mouseDoubleClickEvent(QMouseEvent *) override;
-    virtual void enterEvent(QEnterEvent *) override;
-    virtual void leaveEvent(QEvent *) override;
-
 signals:
     void expandClicked(bool);
     void plusClicked(bool);
     void searchClicked(bool);
+
+private slots:
+    virtual void mouseDoubleClickEvent(QMouseEvent *) override;
+    virtual void enterEvent(QEnterEvent *) override;
+    virtual void leaveEvent(QEvent *) override;
 
 private:
     Ui::WidgetTreeButton *ui;
