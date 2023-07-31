@@ -17,13 +17,13 @@ public:
 
 private slots:
     void on_btNewNote_clicked();
-    void on_pushButton_clicked();
-    void on_pushButton_2_clicked();
 
     void onShortcutsClicked(bool);
     void onShortcutsExpandClicked(bool);
     void onShortcutsPlusClicked(bool);
     void onShortcutsSearchClicked(bool);
+
+    void onNotebooksExpandClicked(bool);
 
 private:
     Ui::WidgetTreeView *ui;

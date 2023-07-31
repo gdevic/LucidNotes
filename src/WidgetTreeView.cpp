@@ -7,6 +7,9 @@ WidgetTreeView::WidgetTreeView(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // This connect needs to be before calling init since the init may emit a signal to expand the tree view
+    connect(ui->tbNotebooks, SIGNAL(expandClicked(bool)), this, SLOT(onNotebooksExpandClicked(bool)));
+
     ui->tbShortcuts->init(true, false, true, "Click to show shortcuts", "", "Click to find shortcut");
     ui->tbAllNotes->init(false, false, false, "Click to show all notes", "", "");
     ui->tbNotebooks->init(true, true, true, "Click to show all notebooks", "Click to add notebook", "Click to find notebook");
@@ -14,16 +17,10 @@ WidgetTreeView::WidgetTreeView(QWidget *parent) :
     ui->tbTags->init(true, true, true, "Click to show tags view", "Click to add tag", "Click to find tag");
     ui->tbTrash->init(false, false, false, "Click to show deleted notes", "", "");
 
-
     // Test only
     static QFileSystemModel *model = new QFileSystemModel;
     model->setRootPath("C:");
-    ui->treeView->setModel(model);
-
-    static QFileSystemModel *model2 = new QFileSystemModel;
-    model2->setRootPath("D:");
-    ui->treeView_2->setModel(model2);
-
+    ui->treeNotebooks->setModel(model);
 
     connect(ui->tbShortcuts, SIGNAL(clicked(bool)), this, SLOT(onShortcutsClicked(bool)));
     connect(ui->tbShortcuts, SIGNAL(expandClicked(bool)), this, SLOT(onShortcutsExpandClicked(bool)));
@@ -56,26 +53,15 @@ void WidgetTreeView::onShortcutsSearchClicked(bool)
     qInfo() << "Shortcuts SEARCH";
 }
 
+void WidgetTreeView::onNotebooksExpandClicked(bool expanded)
+{
+    ui->treeNotebooks->setHidden(!expanded);
+}
+
 
 // TEST:
 
 void WidgetTreeView::on_btNewNote_clicked()
 {
     qInfo() << "on_btNewNote_clicked";
-}
-
-void WidgetTreeView::on_pushButton_clicked()
-{
-    if (ui->treeView->isVisible())
-        ui->treeView->hide();
-    else
-        ui->treeView->show();
-}
-
-void WidgetTreeView::on_pushButton_2_clicked()
-{
-    if (ui->treeView_2->isVisible())
-        ui->treeView_2->hide();
-    else
-        ui->treeView_2->show();
 }
