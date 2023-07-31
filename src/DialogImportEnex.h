@@ -20,13 +20,16 @@ private slots:
     void onFileEnex();
     void onFileExb();
     void onImport();
+    void onMerge();
     void onStop();
     void onTextChanged(QString);
 
 private:
     QString checkEnexFile(const QString fileName);
     QString checkExbFile(const QString fileName);
-    bool import(const QString enexFileName, const QString exbFileName);
+    bool readNotes(const QString enexFileName);
+    bool readDatabase(const QString exbFileName);
+    bool importNotes();
     const QString getEnex();
     const QString getExb();
 
