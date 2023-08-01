@@ -107,6 +107,8 @@ void DialogImportEnex::onImport()
             ui->textProgress->clear();
 
             readNotes(getEnex());
+            readDatabase(getExb());
+            importNotes();
 
 //            m_future = QtConcurrent::run(&DialogImportEnex::readNotes, this, getEnex())
 //                           .then(QtFuture::Launch::Inherit, [this](bool res) { qInfo() << "Phase 2"; return res ? readDatabase(getExb()) : res; });
@@ -199,6 +201,47 @@ bool DialogImportEnex::readDatabase(const QString exbFileName)
     // Phase 2: if we have access to Evernote database, update list of notes with its data
     if (!exbFileName.isEmpty())
     {
+        // XXX This is a temporary hack!
+
+        ClassDatabase db_in;
+        QString ret = db_in.open("importante", exbFileName);
+        if (!ret.isEmpty())
+            return false; // XXX Handle errors
+
+        QSqlQueryModel model_in;
+        model_in.setQuery("SELECT name,stack FROM notebook_attr", db_in.getDB());
+
+        while (model_in.canFetchMore())
+            model_in.fetchMore();
+
+        {
+            ClassDatabase db;
+            QString ret = db.open("addNotebook");
+            Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
+
+            static const QString command = "INSERT OR REPLACE INTO notebook_attr(name, stack) "
+                                           "VALUES (?, ?)";
+
+            for (int i = 0; i < model_in.rowCount(); i++)
+            {
+                QString name = model_in.record(i).value(0).toString();
+                QString stack = model_in.record(i).value(1).toString();
+                qInfo() << name << stack;
+
+                QStringList binds;
+                binds << name;
+                binds << stack;
+
+                // Check if the notebook name and stack already exist
+                int ret = db.queryExec("SELECT * FROM notebook_attr WHERE name=? AND stack=?", binds);
+                qInfo() << ret;
+                if (ret == 0)
+                {
+                    int retval = db.queryExec(command, binds);
+                    qInfo() << "Inserted" << retval;
+                }
+            }
+        }
     }
     return true;
 }

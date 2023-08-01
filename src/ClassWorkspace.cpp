@@ -41,17 +41,15 @@ bool ClassWorkspace::init()
 
     static const QStringList commands = {
         {"CREATE TABLE IF NOT EXISTS notebook_attr "
-         "(id INTEGER PRIMARY KEY NOT NULL, "
+         "(uid INTEGER PRIMARY KEY NOT NULL, "
          "name TEXT NOT NULL COLLATE NOCASE, "
-         "stack TEXT NOT NULL COLLATE NOCASE, "
-         "flags INTEGER, "
-         "note_count INTEGER);"},
+         "stack TEXT NOT NULL COLLATE NOCASE)"},
 
-        {"INSERT OR REPLACE INTO notebook_attr(id, name, stack, flags) "
-         "VALUES (0, 'Inbox', '.', 1);"},        // Inbox folder is the default folder with the ID of 0
+        {"INSERT OR REPLACE INTO notebook_attr(uid, name, stack) "
+         "VALUES (0, '----- Inbox -----', '');"},// Inbox folder is the default folder with the ID of 0
 
         {"CREATE TABLE IF NOT EXISTS note_attr "
-         "(id INTEGER PRIMARY KEY NOT NULL, "    // Note ID, locally unique to the database
+         "(uid INTEGER PRIMARY KEY NOT NULL, "   // Note ID, locally unique to the database
          "guid TEXT NOT NULL, "                  // GUID universally unique note ID
          "title TEXT NOT NULL COLLATE NOCASE, "  // Title string
          "summary TEXT COLLATE NOCASE, "         // Note short summary text, normally taken from the note start
