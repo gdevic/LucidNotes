@@ -94,5 +94,11 @@ int ClassDatabase::queryExec(const QString command, const QStringList &binds)
         qWarning() << "queryExec error:" << m_lastError;
         return 0;
     }
+    //qInfo() << query.isSelect() << query.isActive() << query.isValid() << query.numRowsAffected() << query.size();
+
+    // For SELECT statements, returns true if there was a match, false otherwise
+    if (query.isSelect())
+        return query.first() && query.isActive();
+    // For INSERT, returns the row number of the inserted record
     return query.lastInsertId().toInt();
 }
