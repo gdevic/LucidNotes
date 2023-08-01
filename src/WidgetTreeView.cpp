@@ -1,6 +1,9 @@
 #include "WidgetTreeView.h"
 #include "ui_WidgetTreeView.h"
 
+#include "ClassDatabase.h"
+#include "CTreeModel.h"
+
 WidgetTreeView::WidgetTreeView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::WidgetTreeView)
@@ -18,9 +21,28 @@ WidgetTreeView::WidgetTreeView(QWidget *parent) :
     ui->tbTrash->init(false, false, false, "Click to show deleted notes", "", "");
 
     // Test only
-    static QFileSystemModel *model = new QFileSystemModel;
-    model->setRootPath("C:");
+//    static QFileSystemModel *model = new QFileSystemModel;
+//    model->setRootPath("C:");
+//    ui->treeNotebooks->setModel(model);
+
+//    static ClassDatabase m_db;
+//    static QSqlQueryModel m_model;
+//    QString ret = m_db.open("tree");
+
+//    m_model.setQuery("SELECT stack,name FROM notebook_attr ORDER BY stack", m_db.getDB());
+//    ui->treeNotebooks->setModel(&m_model);
+
+
+    QFile file("T:/CTreeModel.txt");
+    file.open(QIODevice::ReadOnly);
+    QStringList header;
+    header << "Column A";
+    header << "Column B";
+    CTreeModel *model = new CTreeModel(header, file.readAll(), this);
+    file.close();
+
     ui->treeNotebooks->setModel(model);
+
 
     connect(ui->tbShortcuts, SIGNAL(clicked(bool)), this, SLOT(onShortcutsClicked(bool)));
     connect(ui->tbShortcuts, SIGNAL(expandClicked(bool)), this, SLOT(onShortcutsExpandClicked(bool)));
@@ -57,7 +79,6 @@ void WidgetTreeView::onNotebooksExpandClicked(bool expanded)
 {
     ui->treeNotebooks->setHidden(!expanded);
 }
-
 
 // TEST:
 
