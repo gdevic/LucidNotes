@@ -9,8 +9,6 @@ CONFIG += c++17
 SOURCES += \
     CTextDocument.cpp \
     CTextEdit.cpp \
-    CTreeItem.cpp \
-    CTreeModel.cpp \
     ClassDatabase.cpp \
     ClassEnex.cpp \
     ClassNote.cpp \
@@ -29,8 +27,6 @@ SOURCES += \
 HEADERS += \
     CTextDocument.h \
     CTextEdit.h \
-    CTreeItem.h \
-    CTreeModel.h \
     ClassDatabase.h \
     ClassEnex.h \
     ClassNote.h \
