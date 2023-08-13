@@ -1,4 +1,5 @@
 #include "ClassNote.h"
+#include "ClassDatabase.h"
 #include "aes256.h"
 #include <QDir>
 #include <QFile>
@@ -163,3 +164,33 @@ bool ClassNote::readSection(QXmlStreamReader &xml, QString sectionName)
     }
     return true;
 }
+
+/*
+ * Update local database with the data from this note record
+ */
+bool ClassNote::updateDatabase(ClassDatabase *db)
+{
+    static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook, notebook_id, date_created, date_updated)"
+                                   "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+    QStringList binds;
+    binds << guid();
+    binds << title();
+    binds << summary();
+    binds << author();
+    binds << notebook();
+    binds << QString::number(notebookId());
+    binds << created().toString(Qt::ISODate);
+    binds << updated().toString(Qt::ISODate);
+    int lastID = db->queryExec(command, binds);
+    qInfo() << "lastID" << lastID;
+    if (lastID)
+    {
+        qInfo() << "New note ID:" << lastID;
+        return true;
+    }
+    else
+        qWarning() << "Unable to add a note" << db->getLastSqlError();
+
+    return true;
+}
+

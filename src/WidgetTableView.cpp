@@ -4,11 +4,14 @@
 WidgetTableView::WidgetTableView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::WidgetTableView),
-    m_db(this),
-    m_model(this),
-    m_proxy(this)
+    m_sqlModel(this),
+    m_pxProxy(this),
+    m_sortProxy(this)
 {
     ui->setupUi(this);
+
+    QString ret = m_db.open("tableView");
+    Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
 
     // Make the vertical spacing of the table more compact
     QFontMetrics fm(ui->tableNotes->font());
@@ -25,7 +28,7 @@ WidgetTableView::WidgetTableView(QWidget *parent) :
      */
     connect(ui->tableNotes, &QTableView::clicked, this, [=](const QModelIndex &index)
     {
-        QString guid = m_model.index(m_proxy.mapToSource(index).row(), 1).data().toString();
+        QString guid = m_sqlModel.index(m_sortProxy.mapToSource(index).row(), 1).data().toString();
         qInfo() << "Single clicked" << guid;
         emit noteSingleClicked(guid);
     });
@@ -35,10 +38,19 @@ WidgetTableView::WidgetTableView(QWidget *parent) :
      */
     connect(ui->tableNotes, &QTableView::activated, this, [=](const QModelIndex &index)
     {
-        QString guid = m_model.index(m_proxy.mapToSource(index).row(), 1).data().toString();
+        QString guid = m_sqlModel.index(m_sortProxy.mapToSource(index).row(), 1).data().toString();
         qInfo() << "Double clicked" << guid;
         emit noteDoubleClicked(guid);
     });
+
+    // Set up the default list of notes and the chain of governing models
+    onUpdateQuery("", LIST_BY::ALL);
+    m_sqlModel.setHeaderData(1, Qt::Horizontal, "GUID"); // An Example of setting up the header column text
+
+    // Chain all models: QSqlQueryModel -> PopulateAllProxy -> QSortFilterProxyModel => (QTableView)
+    m_pxProxy.setSourceModel(&m_sqlModel);
+    m_sortProxy.setSourceModel(&m_pxProxy);
+    ui->tableNotes->setModel(&m_sortProxy);
 }
 
 WidgetTableView::~WidgetTableView()
@@ -51,17 +63,27 @@ WidgetTableView::~WidgetTableView()
 
 bool WidgetTableView::setupModel()
 {
-    QString ret = m_db.open("table");
-    if (!ret.isEmpty())
-        return false; // XXX Handle errors
-
-    // XXX Set any kind of query, like: "SELECT * FROM note_attr WHERE author = 'anonymous'"
-    m_model.setQuery("SELECT * FROM note_attr", m_db.getDB());
-    m_proxy.setSourceModel(&m_model);
-
-    m_model.setHeaderData(1, Qt::Horizontal, "GUID"); // An Example of setting up the header column text
-
-    ui->tableNotes->setModel(&m_proxy);
-
     return true;
+}
+
+/*
+ * Change the query that the table view uses to list the notes
+ */
+void WidgetTableView::onUpdateQuery(const QString name, LIST_BY key)
+{
+    QSqlQuery query(m_db.getDB());
+    if (key == LIST_BY::ALL)
+        query.prepare("SELECT * FROM note_attr");
+    if (key == LIST_BY::STACK)
+    {
+        query.prepare("SELECT * FROM note_attr WHERE (notebook = ?)");
+        query.bindValue(0, name);
+    }
+    if (key == LIST_BY::NOTE)
+    {
+        query.prepare("SELECT * FROM note_attr WHERE (notebook = ?)");
+        query.bindValue(0, name);
+    }
+    query.exec();
+    m_sqlModel.setQuery(query);
 }

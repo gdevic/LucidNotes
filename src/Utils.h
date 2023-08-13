@@ -20,3 +20,9 @@ static inline ByteArray str2ba(QString s)
         ba.push_back(raw.at(i));
     return ba;
 }
+
+enum LIST_BY {
+    ALL,
+    STACK,
+    NOTE
+};

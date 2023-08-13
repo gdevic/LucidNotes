@@ -20,6 +20,10 @@ public:
     QString getLastSqlError() { return m_lastError; }
     QSqlDatabase getDB() { return QSqlDatabase::database(m_connectionName); }
 
+    uint getNotebookId(const QString name);
+    bool createNotebookAndStack(QString name, QString stack, uint &uid);
+    bool createUniqueNotebook(QString &suggestedName, uint &uid);
+
 private:
     QString m_connectionName;
     QString m_lastError;

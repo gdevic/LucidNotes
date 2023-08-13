@@ -21,7 +21,11 @@ void initAppDefaults()
     QSettings settings;
 
     if (!settings.contains("userName"))           settings.setValue("userName", getUserName());
+#ifdef QT_DEBUG
+    if (!settings.contains("workspaceDir"))       settings.setValue("workspaceDir", "R:");
+#else
     if (!settings.contains("workspaceDir"))       settings.setValue("workspaceDir", QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+#endif
 
     if (!settings.contains("titleFont"))          settings.setValue("titleFont", QApplication::font());
     if (!settings.contains("noteFont"))           settings.setValue("noteFont", QApplication::font());

@@ -7,6 +7,12 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
+/*
+ * Imports the Evernote exported file
+ * Creates a new notebook, "Imported on <date>.n" with increasing "n" for each new import (if on the same day)
+ * Imports all notes into that notebook
+ */
+
 inline const QString DialogImportEnex::getEnex() { return ui->editEnex->text().trimmed(); }
 inline const QString DialogImportEnex::getExb() { return ui->editExb->text().trimmed(); }
 
@@ -20,11 +26,6 @@ DialogImportEnex::DialogImportEnex(QWidget *parent, ClassWorkspace *wks) :
     connect(ui->pbFileEnex, SIGNAL(clicked()), this, SLOT(onFileEnex()));
     connect(ui->pbFileExb, SIGNAL(clicked()), this, SLOT(onFileExb()));
     connect(ui->pbImport, SIGNAL(clicked()), this, SLOT(onImport()));
-    connect(ui->pbMerge, SIGNAL(clicked()), this, SLOT(onMerge()));
-    connect(ui->pbStop, SIGNAL(clicked()), this, SLOT(onStop()));
-
-    connect(ui->editEnex, SIGNAL(textChanged(QString)), this, SLOT(onTextChanged(QString)));
-    connect(ui->editExb, SIGNAL(textChanged(QString)), this, SLOT(onTextChanged(QString)));
 
     QSettings settings;
     ui->editEnex->setText(settings.value("importEnexFile", "").toString());
@@ -36,6 +37,8 @@ DialogImportEnex::DialogImportEnex(QWidget *parent, ClassWorkspace *wks) :
 DialogImportEnex::~DialogImportEnex()
 {
     QSettings settings;
+    settings.setValue("importEnexFile", getEnex());
+    settings.setValue("importExbFile", getExb());
     settings.setValue("importEnexWindowGeometry", saveGeometry());
 
     delete ui;
@@ -47,15 +50,12 @@ DialogImportEnex::~DialogImportEnex()
 void DialogImportEnex::onFileEnex()
 {
     QSettings settings;
-    QString fileName = QFileDialog::getOpenFileName(this, "Select ENEX File", settings.value("importEnexFile").toString(), "Enex notes (*.enex);;All files (*.*)").trimmed();
+    QString fileName = QFileDialog::getOpenFileName(this, "Select ENEX File", getEnex(), "Enex notes (*.enex);;All files (*.*)").trimmed();
     if(!fileName.isNull())
     {
         QString ret = checkEnexFile(fileName);
         if (ret.isEmpty())
-        {
             ui->editEnex->setText(fileName);
-            settings.setValue("importEnexFile", fileName);
-        }
         else
             QMessageBox::critical(this, "ENEX File", ret);
     }
@@ -67,15 +67,12 @@ void DialogImportEnex::onFileEnex()
 void DialogImportEnex::onFileExb()
 {
     QSettings settings;
-    QString fileName = QFileDialog::getOpenFileName(this, "Select Evernote EXB File", settings.value("importExbFile").toString(), "Evernote database (*.exb);;All files (*.*)").trimmed();
+    QString fileName = QFileDialog::getOpenFileName(this, "Select Evernote EXB File", getExb(), "Evernote database (*.exb);;All files (*.*)").trimmed();
     if(!fileName.isNull())
     {
         QString ret = checkExbFile(fileName);
         if (ret.isEmpty())
-        {
             ui->editExb->setText(fileName);
-            settings.setValue("importExbFile", fileName);
-        }
         else
             QMessageBox::critical(this, "Evernote EXB File", "The selected file does not appear to be a valid Evernote Database file!");
     }
@@ -86,67 +83,44 @@ void DialogImportEnex::onFileExb()
  */
 void DialogImportEnex::onImport()
 {
-    qInfo() << __FUNCTION__ << "Thread:" << QThread::currentThread();
-
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [=]()
-    {
-        QString s = QString("running:%1 cancelled:%2 fin:%3").arg(m_future.isRunning()).arg(m_future.isCanceled()).arg(m_future.isFinished());
-        ui->labelStatus->setText(s);
-        ui->labelStatus->update();
-        ui->textProgress->appendPlainText(s);
-    });
-    timer->start(500);
-
+    setCursor(Qt::WaitCursor);
     QString ret = checkEnexFile(getEnex());
     if (ret.isEmpty())
     {
-        if (getExb().isEmpty() || checkExbFile(getExb()).isEmpty())
+        // If we are provided with the EN database, read some extra information
+        if (!getExb().isEmpty() && ui->checkRecreateTree->isChecked())
         {
-            m_enex.thID = QThread::currentThread();
-            ui->textProgress->clear();
+            if (m_enex.readEnDatabase(getExb()) == false)
+            {
+                QMessageBox::critical(this, "Import", "Error reading Evernote database");
+                return;
+            }
+        }
 
-            readNotes(getEnex());
-            readDatabase(getExb());
-            importNotes();
-
-//            m_future = QtConcurrent::run(&DialogImportEnex::readNotes, this, getEnex())
-//                           .then(QtFuture::Launch::Inherit, [this](bool res) { qInfo() << "Phase 2"; return res ? readDatabase(getExb()) : res; });
-//                           .then(QtFuture::Launch::Inherit, [this](bool res) { qInfo() << "Phase 3"; return res ? importNotes() : res; });
+        ret = m_enex.import(getEnex());
+        if (ret.isEmpty())
+        {
+            // Save all imported notes to file blobs
+            if (m_enex.saveAll(m_wks->getDataDir()))
+            {
+                // Update local database with each note's meta data
+                if (m_enex.updateDatabaseAll())
+                {
+                    qInfo() << "Import completed";
+                    // Delete imported notes records in m_enex destructor
+                }
+                else
+                    QMessageBox::critical(this, "Import", "Error updating local database");
+            }
+            else
+                QMessageBox::critical(this, "Import", "Error saving notes");
         }
         else
-            QMessageBox::critical(this, "Evernote EXB File", "The selected file does not appear to be a valid Evernote Database file!");
+            QMessageBox::critical(this, "Import", "Error reading Evernote notes: " + ret);
     }
     else
         QMessageBox::critical(this, "ENEX File", ret);
-}
-
-void DialogImportEnex::onMerge()
-{
-    qInfo() << __FUNCTION__ << "Thread:" << QThread::currentThread();
-
-    // Phase 3: Store (effectively import) new notes into our own database
-    foreach (ClassNote *note, m_enex.m_notes)
-        m_wks->addNote(note);
-}
-
-/*
- * User stopped the import in progress
- * Stop the threads and stay put where you are...
- */
-void DialogImportEnex::onStop()
-{
-    m_future.cancel(); // Track the canceled status in QFuture<>
-    m_enex.cancel();
-}
-
-void DialogImportEnex::onTextChanged(QString s)
-{
-    bool validEnex = checkEnexFile(getEnex()).isEmpty();
-    bool validExb = getExb().isEmpty() || checkExbFile(getExb()).isEmpty();
-    ui->pbImport->setEnabled(validEnex && validExb);
-    ui->editEnex->setStyleSheet(validEnex ? "" : "color: red");
-    ui->editExb->setStyleSheet(validExb ? "" : "color: red");
+    setCursor(Qt::ArrowCursor);
 }
 
 /*
@@ -179,80 +153,4 @@ QString DialogImportEnex::checkExbFile(const QString fileName)
         return "File does not exist";
     ClassDatabase db;
     return db.open("enex", fileName);
-}
-
-/*
- * The main import function; it takes care of all phases of the import
- * This function runs in a Qt Concurrent thread.
- */
-bool DialogImportEnex::readNotes(const QString enexFileName)
-{
-    qInfo() << __FUNCTION__ << "Thread:" << QThread::currentThread();
-
-    // Phase 1: Using the ClassEnex class, prepare it to load a new set of notes; load the notes
-    QString ret = m_enex.import(enexFileName);
-    return ret.isEmpty();
-}
-
-bool DialogImportEnex::readDatabase(const QString exbFileName)
-{
-    qInfo() << __FUNCTION__ << "Thread:" << QThread::currentThread();
-
-    // Phase 2: if we have access to Evernote database, update list of notes with its data
-    if (!exbFileName.isEmpty())
-    {
-        // XXX This is a temporary hack!
-
-        ClassDatabase db_in;
-        QString ret = db_in.open("importante", exbFileName);
-        if (!ret.isEmpty())
-            return false; // XXX Handle errors
-
-        QSqlQueryModel model_in;
-        model_in.setQuery("SELECT name,stack FROM notebook_attr", db_in.getDB());
-
-        while (model_in.canFetchMore())
-            model_in.fetchMore();
-
-        {
-            ClassDatabase db;
-            QString ret = db.open("addNotebook");
-            Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
-
-            static const QString command = "INSERT OR REPLACE INTO notebook_attr(name, stack) "
-                                           "VALUES (?, ?)";
-
-            for (int i = 0; i < model_in.rowCount(); i++)
-            {
-                QString name = model_in.record(i).value(0).toString();
-                QString stack = model_in.record(i).value(1).toString();
-                qInfo() << name << stack;
-
-                QStringList binds;
-                binds << name;
-                binds << stack;
-
-                // Check if the notebook name and stack already exist
-                int ret = db.queryExec("SELECT * FROM notebook_attr WHERE name=? AND stack=?", binds);
-                qInfo() << ret;
-                if (ret == 0)
-                {
-                    int retval = db.queryExec(command, binds);
-                    qInfo() << "Inserted" << retval;
-                }
-            }
-        }
-    }
-    return true;
-}
-
-bool DialogImportEnex::importNotes()
-{
-    qInfo() << __FUNCTION__ << "Thread:" << QThread::currentThread();
-
-    // Phase 3: Store (effectively import) new notes into our own database
-    foreach (ClassNote *note, m_enex.m_notes)
-        m_wks->addNote(note);
-
-    return true;
 }

@@ -42,11 +42,11 @@ bool ClassWorkspace::init()
     static const QStringList commands = {
         {"CREATE TABLE IF NOT EXISTS notebook_attr "
          "(uid INTEGER PRIMARY KEY NOT NULL, "
-         "name TEXT NOT NULL COLLATE NOCASE, "
+         "name TEXT NOT NULL COLLATE NOCASE UNIQUE, "
          "stack TEXT NOT NULL COLLATE NOCASE)"},
 
-        {"INSERT OR REPLACE INTO notebook_attr(uid, name, stack) "
-         "VALUES (0, '----- Inbox -----', '');"},// Inbox folder is the default folder with the ID of 0
+        {"INSERT OR REPLACE INTO notebook_attr(name, stack) "
+         "VALUES ('----- Inbox -----', '');"},   // Inbox folder is the default folder
 
         {"CREATE TABLE IF NOT EXISTS note_attr "
          "(uid INTEGER PRIMARY KEY NOT NULL, "   // Note ID, locally unique to the database
@@ -54,10 +54,10 @@ bool ClassWorkspace::init()
          "title TEXT NOT NULL COLLATE NOCASE, "  // Title string
          "summary TEXT COLLATE NOCASE, "         // Note short summary text, normally taken from the note start
          "author TEXT COLLATE NOCASE, "          // Author name or email
-         "notebook_id INTEGER NOT NULL, "        // ID of the notebook folder this note is shown
+         "notebook TEXT COLLATE NOCASE, "        // Notebook name this note belongs to
+         "notebook_id INTEGER NOT NULL, "        // ID of the notebook folder this note belongs to
          "date_created REAL, "                   // Date and time the note was created
-         "date_updated REAL, "                   // Date and time the note was last edited/changed
-         "flags INTEGER);"}                      // Flags bitmap
+         "date_updated REAL);"}                  // Date and time the note was last edited/changed
     };
     if (!db.queryExec(commands))
     {
@@ -72,41 +72,41 @@ bool ClassWorkspace::init()
  */
 bool ClassWorkspace::addNote(ClassNote *note)
 {
-    qInfo() << "Workspace adding note:" << note->guid();
+//    qInfo() << "Workspace adding note:" << note->guid();
 
-    // Tell the note to save its document as a file data blob (the text of the note, which we do not put in the database)
-    if (note->saveBlob(m_wksDataDir))
-    {
-        ClassDatabase db;
-        QString ret = db.open("addNote");
-        Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
+//    // Tell the note to save its document as a file data blob (the text of the note, which we do not put in the database)
+//    if (note->saveBlob(m_wksDataDir))
+//    {
+//        ClassDatabase db;
+//        QString ret = db.open("addNote");
+//        Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
 
-        static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook_id, date_created, date_updated, flags)"
-                                       "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-        QStringList binds;
-        binds << note->guid();
-        binds << note->title();
-        binds << note->summary();
-        binds << note->author();
-        binds << "0";
-        binds << note->created().toString(Qt::ISODate);
-        binds << note->updated().toString(Qt::ISODate);
-        binds << "0";
-        int lastID = db.queryExec(command, binds);
-        qInfo() << "lastID" << lastID;
-        if (lastID)
-        {
-            qInfo() << "New note ID:" << lastID;
-            return true;
-        }
-        else
-            qWarning() << "Unable to add a note" << db.getLastSqlError();
+//        static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook_id, date_created, date_updated, flags)"
+//                                       "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+//        QStringList binds;
+//        binds << note->guid();
+//        binds << note->title();
+//        binds << note->summary();
+//        binds << note->author();
+//        binds << "0";
+//        binds << note->created().toString(Qt::ISODate);
+//        binds << note->updated().toString(Qt::ISODate);
+//        binds << "0";
+//        int lastID = db.queryExec(command, binds);
+//        qInfo() << "lastID" << lastID;
+//        if (lastID)
+//        {
+//            qInfo() << "New note ID:" << lastID;
+//            return true;
+//        }
+//        else
+//            qWarning() << "Unable to add a note" << db.getLastSqlError();
 
-        // Since adding to the database did not suceed, remove the file data blob
-        note->deleteBlob(m_wksDataDir);
-    }
-    else
-        qWarning() << "Unable to save note blob";
+//        // Since adding to the database did not suceed, remove the file data blob
+//        note->deleteBlob(m_wksDataDir);
+//    }
+//    else
+//        qWarning() << "Unable to save note blob";
     return false;
 }
 

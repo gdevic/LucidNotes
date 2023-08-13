@@ -23,8 +23,6 @@ MainWindow::MainWindow(ClassWorkspace &wks)
 //    connect(ui->actionOpenInNewWindow, &QAction::triggered, this, [=]() { m_wks.onNoteOpen(guid, true); });
 //    connect(ui->actionOpenInNewWindow, SIGNAL(triggered()), this, SLOT(openInExternalWindow()));
 
-    ui->tableView->setupModel();
-
     // When the user single- and double-clicks on a note in the table view, load that note into the main/aux editor
     connect(ui->tableView, &WidgetTableView::noteSingleClicked, this, [=](QString guid) { m_wks.onNoteOpen(guid, true); });
     connect(ui->tableView, &WidgetTableView::noteDoubleClicked, this, [=](QString guid) { m_wks.onNoteOpen(guid, false); });
@@ -32,6 +30,8 @@ MainWindow::MainWindow(ClassWorkspace &wks)
     // The workspace signals the main editor or the aux editor to load a specific note
     connect(&m_wks, SIGNAL(mainEditorLoadNote(ClassNote&)), ui->textEdit, SLOT(loadNote(ClassNote&)));
     connect(&m_wks, SIGNAL(auxEditorLoadNote(ClassNote&)), this, SLOT(openInExternalEditor(ClassNote&)));
+
+    connect(ui->treeView, &WidgetTreeView::updateNotelist, ui->tableView, &WidgetTableView::onUpdateQuery);
 
     // Testing the main view
     connect(ui->actionViewHorizontal, &QAction::triggered, this, [=]() { ui->splitterEdit->setOrientation(Qt::Horizontal); });
@@ -58,6 +58,7 @@ void MainWindow::onImportEnex()
     enex.exec();
 
     ui->tableView->setupModel();
+    ui->treeView->setupModel();
 }
 
 void MainWindow::onOptions()

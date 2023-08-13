@@ -16,6 +16,7 @@ public:
     ClassWorkspace(QString wksDir);
     bool init();
     bool addNote(ClassNote *note);
+    const QString getDataDir() { return m_wksDataDir; }
 
 signals:
     void mainEditorLoadNote(ClassNote &note);

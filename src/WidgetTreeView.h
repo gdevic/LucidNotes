@@ -1,11 +1,11 @@
 #pragma once
 
-#include <QTreeView>
+#include "Utils.h"
 #include <QAbstractItemModel>
-#include <QWidget>
-#include <QFileSystemModel>
+#include <QTreeView>
 
 namespace Ui { class WidgetTreeView; }
+class CTreeModel;
 
 class WidgetTreeView : public QWidget
 {
@@ -14,6 +14,11 @@ class WidgetTreeView : public QWidget
 public:
     explicit WidgetTreeView(QWidget *parent = nullptr);
     ~WidgetTreeView();
+
+    void setupModel();
+
+signals:
+    void updateNotelist(const QString s, LIST_BY key);
 
 private slots:
     void on_btNewNote_clicked();
@@ -24,7 +29,9 @@ private slots:
     void onShortcutsSearchClicked(bool);
 
     void onNotebooksExpandClicked(bool);
+    void onNotebooksLeafClicked(const QModelIndex &index);
 
 private:
     Ui::WidgetTreeView *ui;
+    CTreeModel *m_tmodel;
 };
