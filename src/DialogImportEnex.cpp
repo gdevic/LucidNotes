@@ -100,6 +100,32 @@ void DialogImportEnex::onImport()
         ret = m_enex.import(getEnex());
         if (ret.isEmpty())
         {
+            // Check for duplicate notes and ask the user to decide what to do with them, if any was found
+            QList<ClassNote *> dups = m_enex.getDuplicateNotes(); // Pointers to all duplicate notes held in m_enex structure
+            bool remove_all_dups = false;
+
+            foreach (auto note, dups)
+            {
+                if (remove_all_dups == true)
+                    m_enex.removeNote(note);
+                else
+                {
+                    QMessageBox msg(this);
+                    msg.setText("Imported note '" + note->title() + "' is a duplicate from an already existing note. Should I overwrite the existing note?");
+                    msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Abort);
+                    msg.setDefaultButton(QMessageBox::Yes);
+                    int ret = msg.exec();
+                    if (ret == QMessageBox::Abort)
+                        goto end;
+                    if (ret == QMessageBox::YesToAll)
+                        break;
+                    if (ret == QMessageBox::NoToAll)
+                        remove_all_dups = true;
+                    if ((ret == QMessageBox::No) || (ret == QMessageBox::NoToAll))
+                        m_enex.removeNote(note);
+                }
+            }
+
             // Save all imported notes to file blobs
             if (m_enex.saveAll(m_wks->getDataDir()))
             {
@@ -120,7 +146,10 @@ void DialogImportEnex::onImport()
     }
     else
         QMessageBox::critical(this, "ENEX File", ret);
+end:
     setCursor(Qt::ArrowCursor);
+
+    close(); // Close the dialog
 }
 
 /*

@@ -1,5 +1,4 @@
 #include "ClassEnex.h"
-#include "ClassNote.h"
 #include "ClassDatabase.h"
 #include <QDebug>
 #include <QFile>
@@ -51,6 +50,23 @@ const QString ClassEnex::import(const QString fileName)
         return QString("Unable to open XML file %1 %2 %3").arg(fileName).arg(inFile.error()).arg(inFile.errorString());
 
     return QString();
+}
+
+QList<ClassNote *> ClassEnex::getDuplicateNotes()
+{
+    QList<ClassNote *> dups;
+
+    ClassDatabase db;
+    QString ret = db.open("getDuplicateNotes");
+    Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
+    if (!ret.isEmpty()) return dups;
+
+    foreach(auto note, m_notes)
+    {
+        if (db.getNoteId(note->title(), note->created()) > 0)
+            dups.append(note);
+    }
+    return dups;
 }
 
 /*

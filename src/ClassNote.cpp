@@ -170,6 +170,9 @@ bool ClassNote::readSection(QXmlStreamReader &xml, QString sectionName)
  */
 bool ClassNote::updateDatabase(ClassDatabase *db)
 {
+    // XXX If the note already exists, we need to fully delete it, including its file blob, attachments etc.
+    //     The existing note needs to be fully purged. How about delete history of that note?
+
     static const QString command = "INSERT INTO note_attr(guid, title, summary, author, notebook, notebook_id, date_created, date_updated)"
                                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     QStringList binds;

@@ -102,6 +102,28 @@ int ClassDatabase::queryExec(const QString command, const QStringList &binds)
 }
 
 /*
+ * Returns the note uid or 0 if the note with that name and creation date does not exist
+ * Note names are *not* unique, so an additional designator (note's creation date) is also used.
+ */
+uint ClassDatabase::getNoteId(const QString name, QDateTime &dateCreated)
+{
+    static const QString command = "SELECT uid FROM note_attr WHERE (title = ? AND date_created = ?)";
+
+    QSqlQuery query(getDB());
+    query.prepare(command);
+    query.bindValue(0, name);
+    query.bindValue(1, dateCreated.toString(Qt::ISODate));
+    query.exec();
+    //qInfo() << query.isSelect() << query.isActive() << query.isValid() << query.numRowsAffected() << query.first() << query.size() << query.lastError().text();
+    if (query.lastError().isValid())
+    {
+        qWarning() << "queryExec error:" << query.lastError().text();
+        return 0;
+    }
+    return query.next() ? query.value(0).toUInt() : 0;
+}
+
+/*
  * Returns the notebook uid or 0 if the notebook with that name does not exist
  * Note: notebook names are unique!
  */

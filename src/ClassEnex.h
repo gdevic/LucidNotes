@@ -1,9 +1,8 @@
 #pragma once
 
+#include "ClassNote.h"
 #include <QXmlStreamReader>
 #include <QDateTime>
-
-class ClassNote;
 
 struct NotebookAttrStruct
 {
@@ -30,10 +29,13 @@ public:
     ~ClassEnex();
 
     const QString import(const QString fileName);
+    QList<ClassNote *> getDuplicateNotes();
+    void removeNote(ClassNote *note) { m_notes.remove(m_notes.indexOf(note)); }
     bool readEnDatabase(const QString exbFileName);
     bool saveAll(const QString dataDir);
     bool updateDatabaseAll();
 
+private:
     QList<ClassNote *> m_notes; // List of exported notes
     EnDb m_enDb;                // Extra information read from Evernote's SQLite database
 
