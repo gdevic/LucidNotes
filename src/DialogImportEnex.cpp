@@ -3,6 +3,7 @@
 #include "ClassDatabase.h"
 #include "ClassNote.h"
 #include "ClassWorkspace.h"
+#include "Utils.h"
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -83,7 +84,7 @@ void DialogImportEnex::onFileExb()
  */
 void DialogImportEnex::onImport()
 {
-    setCursor(Qt::WaitCursor);
+    Cursor(this, Qt::WaitCursor);
     QString ret = checkEnexFile(getEnex());
     if (ret.isEmpty())
     {
@@ -91,10 +92,7 @@ void DialogImportEnex::onImport()
         if (!getExb().isEmpty() && ui->checkRecreateTree->isChecked())
         {
             if (m_enex.readEnDatabase(getExb()) == false)
-            {
-                QMessageBox::critical(this, "Import", "Error reading Evernote database");
-                return;
-            }
+                return (void) QMessageBox::critical(this, "Import", "Error reading Evernote database");
         }
 
         ret = m_enex.import(getEnex());
@@ -116,7 +114,7 @@ void DialogImportEnex::onImport()
                     msg.setDefaultButton(QMessageBox::Yes);
                     int ret = msg.exec();
                     if (ret == QMessageBox::Abort)
-                        goto end;
+                        return (void) close();
                     if (ret == QMessageBox::YesToAll)
                         break;
                     if (ret == QMessageBox::NoToAll)
@@ -141,13 +139,11 @@ void DialogImportEnex::onImport()
             else
                 QMessageBox::critical(this, "Import", "Error saving notes");
         }
-        else
-            QMessageBox::critical(this, "Import", "Error reading Evernote notes: " + ret);
+        else // Keep the dialog open
+            return (void) QMessageBox::critical(this, "Import", "Error reading Evernote notes: " + ret);
     }
-    else
-        QMessageBox::critical(this, "ENEX File", ret);
-end:
-    setCursor(Qt::ArrowCursor);
+    else // Keep the dialog open
+        return (void) QMessageBox::critical(this, "ENEX File", ret);
 
     close(); // Close the dialog
 }
