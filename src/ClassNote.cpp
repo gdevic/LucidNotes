@@ -93,6 +93,8 @@ bool ClassNote::saveBlob(QString blobFileName, bool compress, bool encrypt, QStr
  */
 bool ClassNote::readNote(QXmlStreamReader &xml)
 {
+    QSettings settings;
+
     while (!xml.atEnd())
     {
         xml.readNext();
@@ -116,6 +118,12 @@ bool ClassNote::readNote(QXmlStreamReader &xml)
             {
                 if (readSection(xml, "content") == false)
                     return false;
+
+                // Set the app default font and size for all imported elements that do not have it
+                QFont font = settings.value("noteFont").value<QFont>();
+                font.setPointSize(settings.value("noteFontPointSize").toInt());
+                setDefaultFont(font);
+
                 setHtml(s);
                 m_summary = toPlainText().left(200).replace('\n', ' ');
             }
