@@ -1,6 +1,7 @@
 #include "ClassNote.h"
 #include "ClassDatabase.h"
 #include "aes256.h"
+#include <QApplication>
 #include <QDir>
 #include <QFile>
 #include <QStringBuilder>
@@ -105,6 +106,8 @@ bool ClassNote::readNote(QXmlStreamReader &xml)
 
         if (xml.isStartElement())
         {
+            QApplication::processEvents(); // Called from ENEX note import, in the UI thread, give some time slices as we are importing
+
             if ((xml.name().toString() == "title"))
             {
                 if (readSection(xml, "title") == false)

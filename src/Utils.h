@@ -26,14 +26,3 @@ enum LIST_BY {
     STACK,
     NOTE
 };
-
-#include <QWidget>
-
-class Cursor
-{
-public:
-    Cursor(QWidget *w, const QCursor &c) : w{w} { w->setCursor(c); }
-    ~Cursor() { w->unsetCursor(); }
-private:
-    QWidget *w;
-};

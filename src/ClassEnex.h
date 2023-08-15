@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ClassNote.h"
-#include <QXmlStreamReader>
 #include <QDateTime>
+#include <QXmlStreamReader>
 
 struct NotebookAttrStruct
 {
@@ -34,6 +34,9 @@ public:
     bool readEnDatabase(const QString exbFileName);
     bool saveAll(const QString dataDir);
     bool updateDatabaseAll();
+
+signals:
+    void xmlReadTitle(QString title); // Sends the title of each note as they are being imported
 
 private:
     QList<ClassNote *> m_notes; // List of exported notes

@@ -18,7 +18,7 @@ inline const QString DialogImportEnex::getEnex() { return ui->editEnex->text().t
 inline const QString DialogImportEnex::getExb() { return ui->editExb->text().trimmed(); }
 
 DialogImportEnex::DialogImportEnex(QWidget *parent, ClassWorkspace *wks) :
-    QDialog(parent),
+    QDialog(parent, Qt::CustomizeWindowHint | Qt::WindowTitleHint), // Disable close button [X]
     ui(new Ui::DialogImportEnex),
     m_wks(wks)
 {
@@ -27,6 +27,9 @@ DialogImportEnex::DialogImportEnex(QWidget *parent, ClassWorkspace *wks) :
     connect(ui->pbFileEnex, SIGNAL(clicked()), this, SLOT(onFileEnex()));
     connect(ui->pbFileExb, SIGNAL(clicked()), this, SLOT(onFileExb()));
     connect(ui->pbImport, SIGNAL(clicked()), this, SLOT(onImport()));
+
+    // List the titles of the notes as they are being imported
+    connect(&m_enex, &ClassEnex::xmlReadTitle, this, [this](QString s) { ui->editLog->appendPlainText(s); });
 
     QSettings settings;
     ui->editEnex->setText(settings.value("importEnexFile", "").toString());
@@ -84,68 +87,69 @@ void DialogImportEnex::onFileExb()
  */
 void DialogImportEnex::onImport()
 {
-    Cursor(this, Qt::WaitCursor);
+    foreach (auto p, findChildren<QPushButton *>()) p->setEnabled(false);
+    ui->editLog->clear();
+
     QString ret = checkEnexFile(getEnex());
     if (ret.isEmpty())
     {
         // If we are provided with the EN database, read some extra information
-        if (!getExb().isEmpty() && ui->checkRecreateTree->isChecked())
+        if (!ui->checkRecreateTree->isChecked() || m_enex.readEnDatabase(getExb()))
         {
-            if (m_enex.readEnDatabase(getExb()) == false)
-                return (void) QMessageBox::critical(this, "Import", "Error reading Evernote database");
-        }
-
-        ret = m_enex.import(getEnex());
-        if (ret.isEmpty())
-        {
-            // Check for duplicate notes and ask the user to decide what to do with them, if any was found
-            QList<ClassNote *> dups = m_enex.getDuplicateNotes(); // Pointers to all duplicate notes held in m_enex structure
-            bool remove_all_dups = false;
-
-            foreach (auto note, dups)
+            ret = m_enex.import(getEnex());
+            if (ret.isEmpty())
             {
-                if (remove_all_dups == true)
-                    m_enex.removeNote(note);
-                else
+                // Check for duplicate notes and ask the user to decide what to do with them, if any was found
+                QList<ClassNote *> dups = m_enex.getDuplicateNotes(); // Pointers to all duplicate notes held in m_enex structure
+                bool remove_all_dups = false;
+
+                foreach (auto note, dups)
                 {
-                    QMessageBox msg(this);
-                    msg.setText("Imported note '" + note->title() + "' is a duplicate from an already existing note. Should I overwrite the existing note?");
-                    msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Abort);
-                    msg.setDefaultButton(QMessageBox::Yes);
-                    int ret = msg.exec();
-                    if (ret == QMessageBox::Abort)
-                        return (void) close();
-                    if (ret == QMessageBox::YesToAll)
-                        break;
-                    if (ret == QMessageBox::NoToAll)
-                        remove_all_dups = true;
-                    if ((ret == QMessageBox::No) || (ret == QMessageBox::NoToAll))
+                    if (remove_all_dups == true)
                         m_enex.removeNote(note);
+                    else
+                    {
+                        QMessageBox msg(this);
+                        msg.setText("Imported note '" + note->title() + "' is a duplicate from an already existing note. Should I overwrite the existing note?");
+                        msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll | QMessageBox::Cancel);
+                        msg.setDefaultButton(QMessageBox::Yes);
+                        int ret = msg.exec();
+                        if (ret == QMessageBox::Cancel)
+                            goto end;
+                        if (ret == QMessageBox::YesToAll)
+                            break;
+                        if (ret == QMessageBox::NoToAll)
+                            remove_all_dups = true;
+                        if ((ret == QMessageBox::No) || (ret == QMessageBox::NoToAll))
+                            m_enex.removeNote(note);
+                    }
                 }
-            }
 
-            // Save all imported notes to file blobs
-            if (m_enex.saveAll(m_wks->getDataDir()))
-            {
-                // Update local database with each note's meta data
-                if (m_enex.updateDatabaseAll())
+                // Save all imported notes to file blobs
+                if (m_enex.saveAll(m_wks->getDataDir()))
                 {
-                    qInfo() << "Import completed";
-                    // Delete imported notes records in m_enex destructor
+                    // Update local database with each note's meta data
+                    if (m_enex.updateDatabaseAll())
+                    {
+                        ui->editLog->appendPlainText("*** Import completed ***");
+                        // Delete imported notes records in m_enex destructor
+                    }
+                    else
+                        QMessageBox::critical(this, "Import", "Error updating local database");
                 }
                 else
-                    QMessageBox::critical(this, "Import", "Error updating local database");
+                    QMessageBox::critical(this, "Import", "Error saving notes");
             }
             else
-                QMessageBox::critical(this, "Import", "Error saving notes");
+                QMessageBox::critical(this, "Import", "Error reading Evernote notes: " + ret);
         }
-        else // Keep the dialog open
-            return (void) QMessageBox::critical(this, "Import", "Error reading Evernote notes: " + ret);
+        else
+            QMessageBox::critical(this, "Import", "Error reading Evernote database");
     }
-    else // Keep the dialog open
-        return (void) QMessageBox::critical(this, "ENEX File", ret);
-
-    close(); // Close the dialog
+    else
+        QMessageBox::critical(this, "ENEX File", ret);
+end:
+    foreach (auto p, findChildren<QPushButton *>()) p->setEnabled(true);
 }
 
 /*

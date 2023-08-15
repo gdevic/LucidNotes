@@ -1,5 +1,5 @@
-#include "ClassEnex.h"
 #include "ClassDatabase.h"
+#include "ClassEnex.h"
 #include <QDebug>
 #include <QFile>
 
@@ -48,7 +48,6 @@ const QString ClassEnex::import(const QString fileName)
     }
     else
         return QString("Unable to open XML file %1 %2 %3").arg(fileName).arg(inFile.error()).arg(inFile.errorString());
-
     return QString();
 }
 
@@ -155,7 +154,6 @@ bool ClassEnex::updateDatabaseAll()
         if (note->updateDatabase(&db) == false)
             return false;
     }
-
     return true;
 }
 
@@ -173,7 +171,10 @@ bool ClassEnex::readExport(QXmlStreamReader &xml)
             if (note->readNote(xml) == false) // Ignore a note that fails to load XXX can we contine reading XML?
                 delete note;
             else
+            {
                 m_notes.append(note);
+                emit xmlReadTitle(note->title()); // Used by the ENEX import to show some progress
+            }
         }
         if ((xml.name().toString() == "en-export") && xml.isEndElement())
             return true;
@@ -186,6 +187,8 @@ bool ClassEnex::readExport(QXmlStreamReader &xml)
  */
 bool ClassEnex::readEnDatabase(const QString exbFileName)
 {
+    if (!QFile::exists(exbFileName))
+        return false;
     ClassDatabase dbEn;
     QString ret = dbEn.open("evernote", exbFileName);
     Q_ASSERT_X(ret.isEmpty(), __FUNCTION__, ret.toStdString().c_str());
@@ -212,7 +215,6 @@ bool ClassEnex::readEnDatabase(const QString exbFileName)
         m_enDb.title.append(sq.value(0).toString());
         m_enDb.notebook_uid.append(sq.value(1).toUInt());
     }
-
     return true;
 }
 

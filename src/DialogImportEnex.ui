@@ -58,6 +58,9 @@
      </item>
      <item row="1" column="0">
       <widget class="QLineEdit" name="editExb">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
        <property name="placeholderText">
         <string>Select Evernote's database file</string>
        </property>
@@ -65,6 +68,9 @@
      </item>
      <item row="0" column="0">
       <widget class="QLineEdit" name="editEnex">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
        <property name="placeholderText">
         <string>Select Evernote's export file</string>
        </property>
@@ -73,7 +79,7 @@
      <item row="3" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QPlainTextEdit" name="textLog">
+        <widget class="QPlainTextEdit" name="editLog">
          <property name="tabChangesFocus">
           <bool>true</bool>
          </property>
@@ -154,7 +160,7 @@
   <tabstop>pbFileEnex</tabstop>
   <tabstop>editExb</tabstop>
   <tabstop>pbFileExb</tabstop>
-  <tabstop>textLog</tabstop>
+  <tabstop>editLog</tabstop>
   <tabstop>pbImport</tabstop>
  </tabstops>
  <resources>
