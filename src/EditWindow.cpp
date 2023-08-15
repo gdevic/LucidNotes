@@ -3,40 +3,36 @@
 #include <QCloseEvent>
 #include <QSettings>
 
-EditWindow::EditWindow(QWidget *parent, ClassNote &note) :
+EditWindow::EditWindow(QWidget *parent, ClassNote &note, uint positionOffset) :
     QMainWindow(parent),
-    ui(new Ui::EditWindow)
+    ui(new Ui::EditWindow),
+    m_guid(note.guid())
 {
     ui->setupUi(this);
 
-    ui->textEdit->loadNote(note);
+    ui->editNote->loadNote(note);
 
-    readSettings();
+    // Restore the editor position on the screen but offset it by the given number of pixels
+    // We send that from the main window that keeps track of how many external windows we have opened so they are staggered
+    QSettings settings;
+    if (settings.contains("editWindowGeometry"))
+    {
+        restoreGeometry(settings.value("editWindowGeometry").toByteArray());
+        move(pos() + QPoint(positionOffset, positionOffset));
+    }
 }
 
 EditWindow::~EditWindow()
 {
+    QSettings settings;
+    settings.setValue("editWindowGeometry", saveGeometry());
+
     delete ui;
 }
 
 void EditWindow::closeEvent(QCloseEvent *event)
 {
-    writeSettings();
+    emit windowClosed(this, m_guid);
+
     event->accept();
-}
-
-void EditWindow::writeSettings()
-{
-    QSettings settings;
-    settings.setValue("editWindowGeometry", saveGeometry());
-}
-
-void EditWindow::readSettings()
-{
-    QSettings settings;
-    const auto geometry = settings.value("editWindowGeometry", QByteArray()).toByteArray();
-    if (geometry.isEmpty())
-        setGeometry(100, 100, 600, 800);
-    else
-        restoreGeometry(geometry);
 }

@@ -83,12 +83,14 @@ void MainWindow::openInExternalEditor(ClassNote &note)
 {
     if (!m_editWindows.contains(note.guid()))
     {
-        EditWindow *w = new EditWindow(this, note);
+        uint positionOffset = QApplication::style()->pixelMetric(QStyle::PM_TitleBarHeight) * m_editWindows.size();
+        EditWindow *w = new EditWindow(this, note, positionOffset);
+        connect(w, &EditWindow::windowClosed, this, [=](EditWindow *w, QString guid) { m_editWindows.remove(guid); delete w; });
         w->show();
         m_editWindows[note.guid()] = w;
     }
     else
-        static_cast<QMainWindow *>(m_editWindows[note.guid()])->activateWindow();
+        m_editWindows[note.guid()]->setWindowState( m_editWindows[note.guid()]->windowState() & ~Qt::WindowMinimized | Qt::WindowActive );
 }
 
 void MainWindow::saveWindowGeometry()

@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="WidgetTextEdit" name="textEdit" native="true"/>
+     <widget class="WidgetTextEdit" name="editNote" native="true"/>
     </item>
    </layout>
   </widget>
