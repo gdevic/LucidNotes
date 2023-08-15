@@ -14,14 +14,14 @@ void messageHandler(QtMsgType type, const QMessageLogContext &context, const QSt
 {
     Q_UNUSED(context);
     static const QString typeString[5] = { "[Debug]", "[Warning]", "[Critical]", "[Fatal]", "[Info]" }; // QtMsgType
+    static FILE *const std[5] =          {  stdout,    stdout,      stderr,       stderr,    stdout  }; // Which stream do we want it to go
     static QStringList log;
     QString line = QString("%1 %2 %3").arg(QTime::currentTime().toString("HH:mm:ss"), typeString[type], msg);
     log.append(line);
 
-    // Echo every log line to stderr for now
-    fprintf(stderr, line.toLocal8Bit());
-    fprintf(stderr, "\n");
-    fflush(stdout);
+    // Echo every log line to one of the standard console streams
+    fprintf(std[type], line.toLocal8Bit() + "\n");
+    fflush(std[type]);
 
     // Call the Activity Log window once it has been created
     if (activityLog)
