@@ -1,21 +1,28 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "DialogActivityLog.h"
 #include "DialogOptions.h"
 #include "DialogImportEnex.h"
 #include "EditWindow.h"
 #include <QCloseEvent>
+#include <QDesktopServices>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QScreen>
 #include <QSettings>
 #include <QSplitter>
 
-MainWindow::MainWindow(ClassWorkspace &wks)
-    : QMainWindow(nullptr)
-    , ui(new Ui::MainWindow)
-    , m_wks(wks)
+extern DialogActivityLog *activityLog;
+
+MainWindow::MainWindow(ClassWorkspace &wks) :
+    QMainWindow(nullptr),
+    ui(new Ui::MainWindow),
+    m_wks(wks)
 {
     QSettings settings;
     ui->setupUi(this);
+
+    ::activityLog = new DialogActivityLog(this); // Hidden dialog
 
     connect(ui->actionImportENEX, SIGNAL(triggered(bool)), this, SLOT(onImportEnex()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
@@ -33,9 +40,14 @@ MainWindow::MainWindow(ClassWorkspace &wks)
 
     connect(ui->treeView, &WidgetTreeView::updateNotelist, ui->tableView, &WidgetTableView::onUpdateQuery);
 
+    // Help menu
+    connect(ui->actionActivityLog, &QAction::triggered, this, [] { ::activityLog->show(); });
+    connect(ui->actionGettingStartedGuide, &QAction::triggered, this, [] { QDesktopServices::openUrl(QUrl("https://github.com/gdevic/LucidNotes")); });
+    connect(ui->actionAbout, &QAction::triggered, this, [this] { QMessageBox::aboutQt(this); });
+
     // Testing the main view
-    connect(ui->actionViewHorizontal, &QAction::triggered, this, [=]() { ui->splitterEdit->setOrientation(Qt::Horizontal); });
-    connect(ui->actionViewVertical, &QAction::triggered, this, [=]() { ui->splitterEdit->setOrientation(Qt::Vertical); });
+    connect(ui->actionViewHorizontal, &QAction::triggered, this, [=] { ui->splitterEdit->setOrientation(Qt::Horizontal); });
+    connect(ui->actionViewVertical, &QAction::triggered, this, [=] { ui->splitterEdit->setOrientation(Qt::Vertical); });
 
     restoreWindowGeometry();
 

@@ -1,10 +1,32 @@
 #include "MainWindow.h"
 #include "ClassWorkspace.h"
+#include "DialogActivityLog.h"
 #include "Utils.h"
 #include <QApplication>
-#include <QFontDatabase>
 #include <QSettings>
-#include <QStandardPaths>
+#include <QTime>
+
+/*
+ * Root handler for our debug/info messages and the activity log class that handles messages once the MainWindow creates it
+ */
+DialogActivityLog *activityLog = nullptr;
+void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    Q_UNUSED(context);
+    static const QString typeString[5] = { "[Debug]", "[Warning]", "[Critical]", "[Fatal]", "[Info]" }; // QtMsgType
+    static QStringList log;
+    QString line = QString("%1 %2 %3").arg(QTime::currentTime().toString("HH:mm:ss"), typeString[type], msg);
+    log.append(line);
+
+    // Echo every log line to stderr for now
+    fprintf(stderr, line.toLocal8Bit());
+    fprintf(stderr, "\n");
+    fflush(stdout);
+
+    // Call the Activity Log window once it has been created
+    if (activityLog)
+        activityLog->messageHandler(log); // This function will also empty the log
+}
 
 /*
  * For all important settings that do not exist, initializes default values.
@@ -26,7 +48,6 @@ void initAppDefaults()
 #else
     if (!settings.contains("workspaceDir"))       settings.setValue("workspaceDir", QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
 #endif
-
     if (!settings.contains("titleFont"))          settings.setValue("titleFont", QApplication::font());
     if (!settings.contains("noteFont"))           settings.setValue("noteFont", QApplication::font());
     if (!settings.contains("titleFontPointSize")) settings.setValue("titleFontPointSize", QString::number(QApplication::font().pointSize() + 2));
@@ -35,12 +56,13 @@ void initAppDefaults()
 
 int main(int argc, char *argv[])
 {
-    int ret = -1;
-    QApplication a(argc, argv);
+    qInstallMessageHandler(messageHandler);
 
+    QApplication a(argc, argv);
     initAppDefaults();
 
     QSettings settings;
+    int ret = -1;
     do
     {
         settings.remove("restart");

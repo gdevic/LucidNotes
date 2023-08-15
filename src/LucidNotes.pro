@@ -13,6 +13,7 @@ SOURCES += \
     ClassEnex.cpp \
     ClassNote.cpp \
     ClassWorkspace.cpp \
+    DialogActivityLog.cpp \
     DialogImportEnex.cpp \
     DialogOptions.cpp \
     EditWindow.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     ClassEnex.h \
     ClassNote.h \
     ClassWorkspace.h \
+    DialogActivityLog.h \
     DialogImportEnex.h \
     DialogOptions.h \
     EditWindow.h \
@@ -43,6 +45,7 @@ HEADERS += \
     aes256.h
 
 FORMS += \
+    DialogActivityLog.ui \
     DialogImportEnex.ui \
     DialogOptions.ui \
     EditWindow.ui \
